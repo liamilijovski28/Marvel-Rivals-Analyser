@@ -1,5 +1,5 @@
 # Marvel Rivals Analyser
-This project will analyse the gameplay of users, both on a per match, and over career basis. Whilst other stats and trackers apps exist (both in-game & third-party), this project takes a deeper look at the the statistics, rather than just providing general win rate information.
+This project will analyse the gameplay of users, both on a per match, and over career basis. Whilst other stats and trackers apps exist (both in-game & third-party), this project takes a deeper look at the statistics, rather than just providing general win rate information.
 
 
 # Marvel Rivals Basics
