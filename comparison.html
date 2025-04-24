@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Marvel Rivals - Compare Stats</title>
+  <link rel="stylesheet" href="comparison.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <nav>
+      <ul>
+        <li><a href="home page.html">Home</a></li>
+        <li><a href="friends.html">Friends</a></li>
+        <li><a href="heroes.html">Heroes</a></li>
+        <li><a href="matches.html">Matches</a></li>
+        <li><a href="comparison.html" class="active">Comparison</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="player-banner">
+    <div class="banner-image">
+      <img src="images/banner.avif" alt="Marvel Rivals Banner" class="banner-bg">
+    </div>
+
+    <div class="player-profile">
+      <img src="images/profile-placeholder.png" alt="Profile Picture" class="profile-pic">
+      <div class="player-text-overlay">
+        <h1 class="player-name">Compare Stats</h1>
+        <p class="player-views">🆚 Pick a friend to compare</p>
+      </div>
+      <div class="select-container" style="margin-left:auto;">
+        <label for="friend-select">Compare against: </label>
+        <select id="friend-select" onchange="compareStats()">
+          <option value="jordan">Jordan</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <div class="comparison-container">
+    <div class="stat-box">
+      <div class="stat-title">Your Stats</div>
+      <div id="your-winrate" class="stat">Win Rate: 63%</div>
+      <div id="your-kills" class="stat">Avg Kills: 8.1</div>
+      <div id="your-damage" class="stat">Avg Damage: 1200</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title" id="friend-title">Jordan's Stats</div>
+      <div id="friend-winrate" class="stat">Win Rate: 59%</div>
+      <div id="friend-kills" class="stat">Avg Kills: 9.0</div>
+      <div id="friend-damage" class="stat">Avg Damage: 1100</div>
+    </div>
+  </div>
+
+  <script>
+    const yourStats = { winrate: 63, kills: 8.1, damage: 1200 };
+
+    const friends = {
+      jordan: {
+        name: "Jordan",
+        winrate: 59,
+        kills: 9.0,
+        damage: 1100
+      }
+    };
+
+    function compareStats() {
+      const selected = document.getElementById("friend-select").value;
+      const friend = friends[selected];
+
+      document.getElementById("friend-title").textContent = `${friend.name}'s Stats`;
+      document.getElementById("friend-winrate").textContent = `Win Rate: ${friend.winrate}%`;
+      document.getElementById("friend-kills").textContent = `Avg Kills: ${friend.kills}`;
+      document.getElementById("friend-damage").textContent = `Avg Damage: ${friend.damage}`;
+
+      highlight("winrate", yourStats.winrate, friend.winrate);
+      highlight("kills", yourStats.kills, friend.kills);
+      highlight("damage", yourStats.damage, friend.damage);
+    }
+
+    function highlight(stat, yourVal, friendVal) {
+      const yourElem = document.getElementById(`your-${stat}`);
+      const friendElem = document.getElementById(`friend-${stat}`);
+      yourElem.classList.remove("highlight");
+      friendElem.classList.remove("highlight");
+
+      if (yourVal > friendVal) {
+        yourElem.classList.add("highlight");
+      } else if (friendVal > yourVal) {
+        friendElem.classList.add("highlight");
+      }
+    }
+
+    window.onload = compareStats;
+  </script>
+
+</body>
+</html>
