@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Marvel Rivals - Stat Comparison</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Friends</a></li>
+        <li><a href="#">Heroes</a></li>
+        <li><a href="#">Matches</a></li>
+        <li><a class="active" href="#">Compare</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="banner-container">
+    <img class="banner-img" src="images/banner.png" alt="Marvel Rivals Banner">
+    <div class="vs-container">
+      <div class="player">
+        <img src="images/profile-placeholder.png" alt="Your profile">
+        <span class="name">You</span>
+      </div>
+      <div class="vs">VS</div>
+      <div class="player">
+        <img src="images/profile-placeholder.png" alt="Friend profile">
+        <span class="name">Jordan</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tabs-section">
+    <div class="cluster">
+      <div class="tabs">
+        <button class="tab active">Overall</button>
+        <button class="tab">Heroes</button>
+        <button class="tab">Roles</button>
+      </div>
+      <div class="season-dropdown">
+        <select>
+          <option>All Seasons</option>
+          <option>S2: Hellfire Gala</option>
+          <option>S1.5: Eternal Night Falls</option>
+          <option>S1: Eternal Night Falls</option>
+          <option>S0: Doom’s Rise</option>
+        </select>
+      </div>
+    </div>
+    <span class="friend-label">Friend:</span>
+    <div class="friend-dropdown">
+      <select>
+        <option selected>Jordan</option>
+        <option>Adam</option>
+        <option>Simon</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="content-area"></section>
+
+  <script src="script.js"></script>
+</body>
+</html>
