@@ -7,13 +7,18 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="navbar">
-        <a href="#home">Home</a>
-        <a href="#friends">Friends</a>
-        <a href="#heroes">Heroes</a>
-        <a href="#matches">Matches</a>
-        <a href="#comparison">Comparison</a>
-    </div>
+    <div class="page-blur-bg" style="background-image: url('rivals background image.jpg');"></div>
+    <header class="navbar">
+        <nav>
+          <ul>
+            <li><a href="home page.html">Home</a></li>
+            <li><a href="Friends.html">Friends</a></li>
+            <li><a href="Heroes.html">Heroes</a></li>
+            <li><a href="matches.html">Matches</a></li>
+            <li><a class="active" href="compare.html">Compare</a></li>
+          </ul>
+        </nav>
+      </header>
 
     <div class="content">
         <h1>Welcome to Marvel Rivals Analyser</h1>
@@ -40,8 +45,8 @@
                 card.className = 'stat-card';
 
                 card.innerHTML = `
-                    <div class="stat-title">${stat.title}</div>
-                    <div class="stat-value">${stat.value}</div>
+                    <div class="stats-title">${stat.title}</div>
+                    <div class="stats-value">${stat.value}</div>
                 `;
 
                 container.appendChild(card);
