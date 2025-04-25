@@ -1,0 +1,330 @@
+
+body{
+  margin:0;
+  font-family:'Segoe UI', sans-serif;
+  background:#0e0e0e;
+  color:#fff;
+}
+
+/* Navbar same as before */
+.navbar{
+  background:#000;
+  padding:1rem;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+.navbar ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  gap:2rem;
+  justify-content:center;
+}
+.navbar a{
+  color:#fff;
+  text-decoration:none;
+  transition:0.2s;
+}
+.navbar a:hover,.navbar a.active{
+  color:#ffd700;
+  font-weight:bold;
+}
+
+/* Banner + VS overlay */
+.banner-container{
+  position:relative;
+  width:100%;
+}
+.banner-img{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:cover;
+}
+.vs-container{
+  position:absolute;
+  left:50%;
+  transform:translate(-50%,50%);
+  bottom:0;
+  background:rgba(26,26,26,0.75);
+  padding:1rem 3rem;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  gap:4rem;
+}
+.vs-container img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  border:3px solid #fff;
+}
+.vs{
+  font-size:1.8rem;
+  font-weight:bold;
+}
+.name{
+  display:block;
+  text-align:center;
+  margin-top:0.4rem;
+  font-size:1.1rem;
+}
+
+/* Tabs */
+.tabs-section{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:1rem;
+  margin-top:4rem;
+}
+.tabs{
+  display:flex;
+  gap:1rem;
+}
+.tab{
+  padding:0.6rem 1.6rem;
+  background:#2a2a2a;
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  cursor:pointer;
+  font-size:1rem;
+}
+.tab:hover,.tab.active{
+  color:#ffd700;
+  font-weight:bold;
+}
+.season-dropdown select{
+  padding:0.6rem;
+  background:#2a2a2a;
+  border:none;
+  border-radius:10px;
+  color:#fff;
+}
+
+/* Content */
+.content-area{
+  max-width:1200px;
+  margin:2rem auto 6rem;
+  padding:0 1rem;
+}
+
+/* Stat boxes general */
+.stat-box{
+  background:#1a1a1a;
+  padding:1.2rem;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(255,255,255,0.03);
+}
+.stat-title{
+  text-align:center;
+  font-size:1.4rem;
+  margin-bottom:0.8rem;
+  font-weight:bold;
+}
+
+/* Overall flex */
+.overall-flex{
+  display:flex;
+  gap:2rem;
+  justify-content:center;
+}
+.overall-box{
+  flex:1;
+}
+.stat-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:0.5rem;
+}
+.stat-label{
+  font-weight:bold;
+  font-size:1rem;
+}
+.stat-value{
+  background:#121212;
+  padding:0.4rem 0.6rem;
+  border-radius:5px;
+  min-width:90px;
+  text-align:center;
+  font-size:1rem;
+}
+
+/* Highlight */
+.highlight{
+  background:#204020;
+  color:#aaffaa;
+}
+
+/* Roster flex (heroes/roles) */
+.roster-flex{
+  display:flex;
+  gap:1rem;
+  overflow-x:auto;
+}
+.roster-list{
+  flex:0 0 200px;
+}
+.roster-item{
+  padding:0.3rem;
+  font-size:0.95rem;
+}
+.roster-side{
+  flex:1;
+}
+.roster-row{
+  display:flex;
+  justify-content:space-between;
+  gap:0.3rem;
+  margin-bottom:0.4rem;
+}
+.sub-stat{
+  flex:1;
+  background:#121212;
+  padding:0.4rem;
+  border-radius:4px;
+  text-align:center;
+  font-size:0.95rem;
+}
+
+/* allow scrolling past */
+body{
+  padding-bottom:120px;
+}
+
+
+/* roster header */
+.roster-header{
+  display:flex;
+  justify-content:space-between;
+  gap:0.3rem;
+  margin-bottom:0.5rem;
+}
+.sub-head{
+  flex:1;
+  background:#2a2a2a;
+  padding:0.4rem;
+  border-radius:4px;
+  text-align:center;
+  font-weight:bold;
+  font-size:0.95rem;
+}
+
+/* roster-item darker boxes */
+.roster-item{
+  background:#121212;
+  margin-bottom:0.4rem;
+  border-radius:4px;
+  text-align:center;
+}
+/* increase opacity vs container */
+.vs-container{
+  background:rgba(26,26,26,0.85);
+  width:100%;
+  left:0;
+  transform:none;
+  justify-content:center;
+}
+
+
+/* label darker box */
+.stat-label{
+  background:#121212;
+  padding:0.4rem 0.6rem;
+  border-radius:4px;
+  margin-right:0.5rem;
+  flex:1;
+}
+
+/* roster-item sizing to match */
+.roster-item{
+  padding:0.4rem;
+  flex:1;
+}
+
+/* friend dropdown */
+.friend-dropdown select{
+  padding:0.6rem;
+  background:#2a2a2a;
+  border:none;
+  border-radius:10px;
+  color:#fff;
+}
+
+/* tabs-section layout: allow right aligned friend dropdown */
+.tabs-section{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:1rem;
+  width:100%;
+  padding:0 1rem;
+}
+.friend-dropdown{
+  margin-left:auto;
+}
+
+
+
+/* ensure highlight overrides sub-stat */
+.sub-stat.highlight{
+  background:#204020 !important;
+  color:#aaffaa;
+}
+
+/* reposition vs-container */
+.vs-container{
+  position:absolute;
+  left:50%;
+  transform:translate(-50%,50%);
+  background:rgba(26,26,26,0.85);
+  padding:1rem 3rem;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  gap:4rem;
+}
+
+/* friend dropdown spacing */
+.friend-dropdown{
+  margin-left:auto;
+  margin-right:3rm;
+}
+
+
+/* centre tabs cluster without being pushed */
+.tabs-section{
+  position:relative;
+  justify-content:center;
+}
+.cluster{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+.friend-label{
+  position:absolute;
+  right:300px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:1rem;
+}
+.friend-dropdown{
+  position:absolute;
+  right:210px;
+  top:50%;
+  transform:translateY(-50%);
+  margin:0;
+}
+
+/* adjust vs-container up */
+.vs-container{
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+}
