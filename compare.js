@@ -1,3 +1,17 @@
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const friendSelect = document.querySelector('.friend-dropdown select');
+  const selectedFriend = getQueryParam('friend');
+
+  if (selectedFriend && friendSelect) {
+    friendSelect.value = selectedFriend;
+    friendSelect.dispatchEvent(new Event('change'));
+  }
+});
 
 const overallStats = {
   user: {"KDA Ratio": 4.05, "Kills": 16665, "Deaths": 6826, "Assists": 15171, "Damage": 785500, "Healing": 69232, "Damage Blocked": 280571, "Max Kill Streak": 28, "MVPs": 73, "SVPs": 191},
