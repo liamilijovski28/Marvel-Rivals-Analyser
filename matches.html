@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marvel Rivals - Match History</title>
-  <link rel="stylesheet" href="style_Izzy.css">
+  <link rel="stylesheet" href="style_Izzy.css" />
 </head>
 
 <body>
@@ -25,14 +25,11 @@
   <section class="player-banner">
     <div class="banner-image">
       <div class="banner-bg-blur" id="bannerBlur"></div>
-      <img src="images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif" 
-           alt="Marvel Rivals Banner" 
-           class="banner-bg" 
-           id="bannerImage">
+      <img src="images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif" class="banner-bg" id="bannerImage" />
     </div>
 
     <div class="player-profile">
-      <img src="images/profilepic.jpg" alt="Profile Picture" class="profile-pic">
+      <img src="images/profilepic.jpg" alt="Profile Picture" class="profile-pic" />
       <div class="player-text-overlay">
         <h1 class="player-name">Player</h1>
         <p class="player-views">⭐ 627 Views</p>
@@ -47,9 +44,20 @@
     </div>
 
     <div class="stats-section">
+      <!-- Heatmap block -->
       <div class="heatmap-card">
-        <h2 class="heatmap-title">Play Activity</h2>
-        <div class="heatmap-layout">
+        <div class="heatmap-top-bar">
+          <h2 class="heatmap-title">ACTIVITY</h2>
+          <span class="heatmap-sub">Last 60 days.</span>
+        </div>
+
+        <div class="heatmap-tabs">
+          <button class="active">Playtime</button>
+          <button disabled>K/D</button>
+          <button disabled>Win Ratio</button>
+        </div>
+
+        <div class="heatmap-layout-labeled">
           <div class="heatmap-days">
             <div>Sun</div>
             <div>Mon</div>
@@ -59,7 +67,11 @@
             <div>Fri</div>
             <div>Sat</div>
           </div>
-          <div class="heatmap-grid" id="heatmapGrid"></div>
+
+          <div class="heatmap-wrapper">
+            <div class="heatmap-months" id="monthLabels"></div>
+            <div class="heatmap-grid" id="heatmapGrid"></div>
+          </div>
         </div>
 
         <div class="heatmap-legend">
@@ -72,38 +84,32 @@
             <span style="background-color: #ffcc33;"></span>
           </div>
           <div class="legend-values">
-            <span>0</span>
-            <span>2</span>
-            <span>5</span>
-            <span>7</span>
-            <span>10</span>
+            <span>0</span><span>2</span><span>5</span><span>7</span><span>10</span>
           </div>
         </div>
       </div>
 
+      <!-- Match History Cards -->
       <div class="match-list">
         <div class="match-summary-header">
           <div class="match-date">Apr 28 <span class="match-count">20</span></div>
           <div class="match-stats-summary">
-            <span class="wins">16 W</span> //
-            <span class="losses">4 L</span>
+            <span class="wins">16 W</span> // <span class="losses">4 L</span>
           </div>
           <div class="avg-kda">Avg KDA <strong>6.40</strong></div>
         </div>
 
-        <!-- Match Card 1 -->
+        <!-- Match Card Template (Repeatable) -->
         <div class="match-card-modern win">
           <div class="match-info-left">
             <div class="match-mode">Domination <span class="badge">MVP</span></div>
             <div class="match-meta">1d ago // Competitive • Krakoa</div>
           </div>
-
           <div class="match-center">
             <div class="hero-icon"><img src="images/hero1.png" alt="Hero"></div>
             <div class="score">Score: <strong>2 : 1</strong></div>
             <div class="rs">Eternity<br><span class="rs-value">5,197 RS <span class="rs-gain">+18</span></span></div>
           </div>
-
           <div class="match-kda">
             <div>Kills: <strong>21</strong></div>
             <div>Deaths: <strong>7</strong></div>
@@ -112,24 +118,93 @@
           </div>
         </div>
 
-        <!-- Match Card 2 -->
+        <div class="match-card-modern win">
+          <div class="match-info-left">
+            <div class="match-mode">Convoy</div>
+            <div class="match-meta">1d ago // Competitive • Spider-Islands</div>
+          </div>
+          <div class="match-center">
+            <div class="hero-icon"><img src="images/hero2.png" alt="Hero"></div>
+            <div class="score">Score: <strong>1 : 2</strong></div>
+            <div class="rs">Eternity<br><span class="rs-value">5,179 RS <span class="rs-gain">+19</span></span></div>
+          </div>
+          <div class="match-kda">
+            <div>Kills: <strong>24</strong></div>
+            <div>Deaths: <strong>3</strong></div>
+            <div>Assists: <strong>1</strong></div>
+            <div class="match-kda-value">KDA: <span>8.33</span></div>
+          </div>
+        </div>
+
         <div class="match-card-modern loss">
           <div class="match-info-left">
             <div class="match-mode">Convergence</div>
             <div class="match-meta">1d ago // Competitive • Central Park</div>
           </div>
-
           <div class="match-center">
-            <div class="hero-icon"><img src="images/hero2.png" alt="Hero"></div>
-            <div class="score">Score: <strong>3 : 4</strong></div>
+            <div class="hero-icon"><img src="images/hero3.png" alt="Hero"></div>
+            <div class="score">Score: <strong>4 : 3</strong></div>
             <div class="rs">Eternity<br><span class="rs-value">5,159 RS <span class="rs-loss">−23</span></span></div>
           </div>
-
           <div class="match-kda">
             <div>Kills: <strong>32</strong></div>
             <div>Deaths: <strong>14</strong></div>
             <div>Assists: <strong>13</strong></div>
             <div class="match-kda-value">KDA: <span>3.21</span></div>
+          </div>
+        </div>
+
+        <div class="match-card-modern win">
+          <div class="match-info-left">
+            <div class="match-mode">Convergence</div>
+            <div class="match-meta">1d ago // Competitive • Hall of Djalila</div>
+          </div>
+          <div class="match-center">
+            <div class="hero-icon"><img src="images/hero4.png" alt="Hero"></div>
+            <div class="score">Score: <strong>3 : 2</strong></div>
+            <div class="rs">Eternity<br><span class="rs-value">5,181 RS <span class="rs-gain">+14</span></span></div>
+          </div>
+          <div class="match-kda">
+            <div>Kills: <strong>18</strong></div>
+            <div>Deaths: <strong>7</strong></div>
+            <div>Assists: <strong>3</strong></div>
+            <div class="match-kda-value">KDA: <span>3.00</span></div>
+          </div>
+        </div>
+
+        <div class="match-card-modern win">
+          <div class="match-info-left">
+            <div class="match-mode">Convoy</div>
+            <div class="match-meta">1d ago // Competitive • Midtown</div>
+          </div>
+          <div class="match-center">
+            <div class="hero-icon"><img src="images/hero5.png" alt="Hero"></div>
+            <div class="score">Score: <strong>3 : 2</strong></div>
+            <div class="rs">Eternity<br><span class="rs-value">5,167 RS <span class="rs-gain">+14</span></span></div>
+          </div>
+          <div class="match-kda">
+            <div>Kills: <strong>25</strong></div>
+            <div>Deaths: <strong>4</strong></div>
+            <div>Assists: <strong>6</strong></div>
+            <div class="match-kda-value">KDA: <span>7.75</span></div>
+          </div>
+        </div>
+
+        <div class="match-card-modern loss">
+          <div class="match-info-left">
+            <div class="match-mode">Payload</div>
+            <div class="match-meta">2d ago // Casual • Latveria</div>
+          </div>
+          <div class="match-center">
+            <div class="hero-icon"><img src="images/hero6.png" alt="Hero"></div>
+            <div class="score">Score: <strong>1 : 4</strong></div>
+            <div class="rs">Eternity<br><span class="rs-value">5,090 RS <span class="rs-loss">−28</span></span></div>
+          </div>
+          <div class="match-kda">
+            <div>Kills: <strong>8</strong></div>
+            <div>Deaths: <strong>15</strong></div>
+            <div>Assists: <strong>4</strong></div>
+            <div class="match-kda-value">KDA: <span>0.8</span></div>
           </div>
         </div>
       </div>
@@ -155,7 +230,6 @@
     blurBg.style.backgroundImage = `url('${selected.path}')`;
     pageBlur.style.backgroundImage = `url('${selected.path}')`;
 
-    // Load heatmap
     fetch('heatmap-data.json')
       .then(res => res.json())
       .then(data => {
@@ -178,6 +252,20 @@
           });
 
           grid.appendChild(weekColumn);
+        });
+
+        const monthsRow = document.getElementById("monthLabels");
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let currentMonth = null;
+
+        data.forEach(week => {
+          const firstDay = new Date(week[0].date);
+          const monthName = monthNames[firstDay.getMonth()];
+          const label = document.createElement('div');
+          label.style.width = '15px';
+          label.textContent = (currentMonth !== monthName) ? monthName : '';
+          currentMonth = monthName;
+          monthsRow.appendChild(label);
         });
       })
       .catch(err => console.error('Failed to load heatmap:', err));
