@@ -30,7 +30,7 @@
            class="banner-bg" 
            id="bannerImage">
     </div>
-    
+
     <div class="player-profile">
       <img src="images/profilepic.jpg" alt="Profile Picture" class="profile-pic">
       <div class="player-text-overlay">
@@ -50,7 +50,6 @@
       <div class="heatmap-card">
         <h2 class="heatmap-title">Play Activity</h2>
         <div class="heatmap-layout">
-          <!-- Day Labels -->
           <div class="heatmap-days">
             <div>Sun</div>
             <div>Mon</div>
@@ -60,12 +59,9 @@
             <div>Fri</div>
             <div>Sat</div>
           </div>
-
-          <!-- Heatmap Grid -->
           <div class="heatmap-grid" id="heatmapGrid"></div>
         </div>
 
-        <!-- Matches Played Legend -->
         <div class="heatmap-legend">
           <div class="legend-label">Matches Played</div>
           <div class="legend-colors">
@@ -86,28 +82,54 @@
       </div>
 
       <div class="match-list">
-        <div class="match-card">
-          <div class="match-header">
-            <span>Apr 21</span> • <span>Competitive</span> • <span>Central Park</span>
+        <div class="match-summary-header">
+          <div class="match-date">Apr 28 <span class="match-count">20</span></div>
+          <div class="match-stats-summary">
+            <span class="wins">16 W</span> //
+            <span class="losses">4 L</span>
+          </div>
+          <div class="avg-kda">Avg KDA <strong>6.40</strong></div>
+        </div>
+
+        <!-- Match Card 1 -->
+        <div class="match-card-modern win">
+          <div class="match-info-left">
+            <div class="match-mode">Domination <span class="badge">MVP</span></div>
+            <div class="match-meta">1d ago // Competitive • Krakoa</div>
           </div>
 
-          <div class="match-content">
-            <div class="hero-info">
-              <img src="hero-icon.png" alt="Hero Icon" class="hero-icon">
-              <div class="hero-name">Eternity</div>
-            </div>
+          <div class="match-center">
+            <div class="hero-icon"><img src="images/hero1.png" alt="Hero"></div>
+            <div class="score">Score: <strong>2 : 1</strong></div>
+            <div class="rs">Eternity<br><span class="rs-value">5,197 RS <span class="rs-gain">+18</span></span></div>
+          </div>
 
-            <div class="match-details">
-              <p><strong>Score:</strong> 4 - 3</p>
-              <p><strong>R$:</strong> 5103 (+11)</p>
-            </div>
+          <div class="match-kda">
+            <div>Kills: <strong>21</strong></div>
+            <div>Deaths: <strong>7</strong></div>
+            <div>Assists: <strong>2</strong></div>
+            <div class="match-kda-value">KDA: <span>3.29</span></div>
+          </div>
+        </div>
 
-            <div class="kda">
-              <div>Kills: <strong>29</strong></div>
-              <div>Deaths: <strong>10</strong></div>
-              <div>Assists: <strong>50</strong></div>
-              <div><strong>KDA:</strong> <span class="kda-value">7.90</span></div>
-            </div>
+        <!-- Match Card 2 -->
+        <div class="match-card-modern loss">
+          <div class="match-info-left">
+            <div class="match-mode">Convergence</div>
+            <div class="match-meta">1d ago // Competitive • Central Park</div>
+          </div>
+
+          <div class="match-center">
+            <div class="hero-icon"><img src="images/hero2.png" alt="Hero"></div>
+            <div class="score">Score: <strong>3 : 4</strong></div>
+            <div class="rs">Eternity<br><span class="rs-value">5,159 RS <span class="rs-loss">−23</span></span></div>
+          </div>
+
+          <div class="match-kda">
+            <div>Kills: <strong>32</strong></div>
+            <div>Deaths: <strong>14</strong></div>
+            <div>Assists: <strong>13</strong></div>
+            <div class="match-kda-value">KDA: <span>3.21</span></div>
           </div>
         </div>
       </div>
@@ -130,7 +152,6 @@
 
     bannerImg.src = selected.path;
     bannerImg.style.objectPosition = selected.position;
-
     blurBg.style.backgroundImage = `url('${selected.path}')`;
     pageBlur.style.backgroundImage = `url('${selected.path}')`;
 
