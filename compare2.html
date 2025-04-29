@@ -10,7 +10,7 @@
     <nav>
       <ul>
         <li><a href="#">Home</a></li>
-        <li><a href="Friends2.html">Friends</a></li>
+        <li><a href="Friend2.html">Friends</a></li>
         <li><a href="#">Heroes</a></li>
         <li><a href="#">Matches</a></li>
         <li><a class="active" href="#">Compare</a></li>
@@ -28,7 +28,7 @@
       <div class="vs">VS</div>
       <div class="player">
         <img src="images/profile-placeholder.png" alt="Friend profile">
-        <span class="name">Sp1dermain</span>
+        <span class="name">Sp1dermain</span> <!-- Default, but dynamically replaced -->
       </div>
     </div>
   </section>
@@ -50,6 +50,7 @@
         </select>
       </div>
     </div>
+
     <span class="friend-label">Friend:</span>
     <div class="friend-dropdown">
       <select>
@@ -61,9 +62,44 @@
     </div>
   </section>
 
-  <section class="content-area"></section>
+  <section class="content-area">
+    <!-- Placeholder for dynamic stats later -->
+  </section>
 
-  <script src="compare.js"></script>
-  <script src="compare.js"></script>
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    // Helper function to shorten a name if too long
+    function shortenName(name, maxLength = 12) {
+      if (name.length > maxLength) {
+        return name.substring(0, maxLength - 1) + "…"; // Shorten and add ellipsis
+      }
+      return name;
+    }
+
+    // Read friend name from URL
+    const params = new URLSearchParams(window.location.search);
+    const friend = params.get('friend');
+
+    if (friend) {
+      // Set friend's name in VS block
+      const nameSpans = document.querySelectorAll('.player .name');
+      if (nameSpans.length > 1) {
+        nameSpans[1].textContent = shortenName(friend);
+      }
+
+      // Update the friend dropdown selection
+      const friendDropdown = document.querySelector('.friend-dropdown select');
+      if (friendDropdown) {
+        for (let option of friendDropdown.options) {
+          if (option.value === friend || option.textContent === friend) {
+            option.selected = true;
+            break;
+          }
+        }
+      }
+    }
+  </script>
+
 </body>
 </html>

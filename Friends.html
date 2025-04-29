@@ -1,95 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friends</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friends</title>
+  <link rel="stylesheet" href="style_Pineapple.css">
 </head>
 <body>
-    <header>
-        <h1 id="site-title">Rivals Compare</h1>
-            <nav id = "site-nav">
-                <a href="Stats.html" class = "site-nav-item">Stats</a>
-                <a href="Heroes.html" class = "site-nav-item">Heroes</a>
-                <a href="Friends.html" class = "site-nav-item">Friends</a>
-                <a href="Matches.html" class = "site-nav-item">Matches</a>
-                <a href="Comparison.html" class = "site-nav-item">Comparison</a>
-            </nav>
-    </header>
-        <main>
-        <section id="friends-list">
-    
-            <div class="friend-item">
-            
-                <span style="font-size: 16px; font-weight: bold;">Sp1dermain</span>
-                <div>
-                    <button style="margin-right: 10px; padding: 5px 10px;">Compare</button>
-                    <button class="dropdown-toggle" onclick="toggleDropdown(this)">...</button>
-                    <div class="dropdown-menu">
-                        <button class = "remove-friend-dropdown">Remove Friend</button>
-                        <button class = "remove-friend-dropdown">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        
-            <div class="friend-item">
-            
-                <span style="font-size: 16px; font-weight: bold;">scOOP</span>
-                <div>
-                    <button style="margin-right: 10px; padding: 5px 10px;">Compare</button>
-                    <button class="dropdown-toggle" onclick="toggleDropdown(this)">...</button>
-                    <div class="dropdown-menu">
-                        <button class = "remove-friend-dropdown">Remove Friend</button>
-                        <button class = "remove-friend-dropdown">Cancel</button>
-                    </div>
-                </div>
-            </div>
+  <header class="navbar">
+    <nav>
+      <ul>
+        <li><a href="Home.html">Home</a></li>
+        <li><a class="active" href="Friends.html">Friends</a></li>
+        <li><a href="Heroes.html">Heroes</a></li>
+        <li><a href="Matches.html">Matches</a></li>
+        <li><a href="Compare.html">Compare</a></li>
+      </ul>
+    </nav>
+  </header>
 
-            <div class="friend-item">
-            
-                <span style="font-size: 16px; font-weight: bold;">Krunk</span>
-                <div>
-                    <button style="margin-right: 10px; padding: 5px 10px;">Compare</button>
-                    <button class="dropdown-toggle" onclick="toggleDropdown(this)">...</button>
-                    <div class="dropdown-menu">
-                        <button class = "remove-friend-dropdown">Remove Friend</button>
-                        <button class = "remove-friend-dropdown">Cancel</button>
-                    </div>
-                </div>
-            </div>
+  <main style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+    <h1 class="friends-title">Friends</h1>
 
-            <div class="friend-item">
-            
-                <span style="font-size: 16px; font-weight: bold;">ferret88</span>
-                <div>
-                    <button style="margin-right: 10px; padding: 5px 10px;">Compare</button>
-                    <button class="dropdown-toggle" onclick="toggleDropdown(this)">...</button>
-                    <div class="dropdown-menu">
-                        <button class = "remove-friend-dropdown">Remove Friend</button>
-                        <button class = "remove-friend-dropdown">Cancel</button>
-                    </div>
-                </div>
-            </div>
+    <section class="friends-list">
 
-        </section>
-    </main>
-    
-    <script>
-        function toggleDropdown(button) {
-            const dropdown = button.nextElementSibling;
-            const isVisible = dropdown.style.display === 'block';
-            document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
-            dropdown.style.display = isVisible ? 'none' : 'block';
-        }
-    
-        
-        document.addEventListener('click', (event) => {
-            if (!event.target.closest('.friend-item')) {
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
-            }
-        });
-    </script>
-    
+      <div class="friend-block">
+        <div class="friend-name">Sp1dermain</div>
+        <div class="friend-actions">
+          <button class="friend-button compare">Compare</button>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="friend-block">
+        <div class="friend-name">scOOP</div>
+        <div class="friend-actions">
+          <button class="friend-button compare">Compare</button>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="friend-block">
+        <div class="friend-name">Krunk</div>
+        <div class="friend-actions">
+          <button class="friend-button compare">Compare</button>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="friend-block">
+        <div class="friend-name">ferret88</div>
+        <div class="friend-actions">
+          <button class="friend-button compare">Compare</button>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="Friends.js"></script>
+
 </body>
 </html>

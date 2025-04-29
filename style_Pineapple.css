@@ -23,15 +23,18 @@ body{
   gap:2rem;
   justify-content:center;
 }
-.navbar a{
-  color:#fff;
-  text-decoration:none;
-  transition:0.2s;
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+  display: inline-block; 
 }
-.navbar a:hover,.navbar a.active{
-  color:#ffd700;
-  font-weight:bold;
+
+.navbar a:hover, .navbar a.active {
+  color: #ffd700;
+  transform: scale(1.1);
 }
+
 
 /* Banner + VS overlay */
 .banner-container{
@@ -327,4 +330,109 @@ body{
   bottom:0;
   left:50%;
   transform:translateX(-50%);
+}
+
+/* BELOW IS NEW STYLING FOR FRIENDS PAGE TEST */
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.friend-block {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.friend-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.friend-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.friend-button {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: #2a2a2a;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.friend-button.compare:hover {
+  background: #204020;
+}
+
+.friend-button.remove {
+  background: #600;
+}
+
+.friend-button.remove:hover {
+  background: #900;
+}
+/* Dropdown styling for friends page */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background: #2a2a2a;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.dropdown.show .dropdown-toggle {
+  background: #3a3a3a; 
+}
+
+.dropdown-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: 0 0 10px rgba(255,255,255,0.05);
+  min-width: 160px;
+}
+
+.dropdown-menu button {
+  width: 100%; 
+  background: none;
+  border: none;
+  padding: 0.8rem 1rem;
+  color: white;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+  background: #333;
+}
+
+.dropdown.show .dropdown-menu {
+  display: block;
 }

@@ -19,8 +19,14 @@ const roleStats = {
 };
 
 const fmt = new Intl.NumberFormat();
+const params = new URLSearchParams(window.location.search);
+const selectedFriend = params.get("friend") || "Sp1dermain";
 
-// ----------------- Overall -----------------
+function shortenName(name, maxLength = 12) {
+  return name.length > maxLength ? name.slice(0, maxLength - 1) + "…" : name;
+}
+
+
 function buildOverallBox(titleText, data, compare){
   const box=document.createElement('div');
   box.className='stat-box overall-box';
@@ -57,16 +63,15 @@ function renderOverall(){
   const wrap=document.createElement('div');
   wrap.className='overall-flex';
   wrap.appendChild(buildOverallBox('You', overallStats.user, overallStats.friend));
-  wrap.appendChild(buildOverallBox('Jordan', overallStats.friend, overallStats.user));
+  wrap.appendChild(buildOverallBox(shortenName(selectedFriend), overallStats.friend, overallStats.user));
   return wrap;
 }
 
-// --------- Heroes / Roles ----------
+
 function buildRoster(namesArr, statsUser, statsFriend, listTitle){
   const container=document.createElement('div');
   container.className='roster-flex';
 
-  // list column
   const listBox=document.createElement('div');
   listBox.className='stat-box roster-list';
   const lt=document.createElement('div');
@@ -82,12 +87,10 @@ function buildRoster(namesArr, statsUser, statsFriend, listTitle){
   });
   container.appendChild(listBox);
 
-  // Function to make side column
   function makeSide(titleArr, statsObj, compareObj){
     const side=document.createElement('div');
     side.className='stat-box roster-side';
 
-    // header row
     const header=document.createElement('div');
     header.className='roster-header';
     titleArr.forEach(t=>{
@@ -98,7 +101,6 @@ function buildRoster(namesArr, statsUser, statsFriend, listTitle){
     });
     side.appendChild(header);
 
-    // rows
     namesArr.forEach(name=>{
       const row=document.createElement('div');
       row.className='roster-row';
@@ -135,7 +137,7 @@ function renderRoles(){
   return buildRoster(roleNames, roleStats.user, roleStats.friend, 'Class');
 }
 
-// ---------------- Tab handling -----------------
+
 function clearContent(){ document.querySelector('.content-area').innerHTML=''; }
 
 function renderTab(tab){
@@ -155,4 +157,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   });
   renderTab('Overall');
+
+  const vsSpans = document.querySelectorAll(".player .name");
+  if (vsSpans.length > 1) {
+    vsSpans[1].textContent = shortenName(selectedFriend);
+  }
+
+  const friendDropdown = document.querySelector(".friend-dropdown select");
+  if (friendDropdown) {
+    for (let option of friendDropdown.options) {
+      if (option.value === selectedFriend || option.textContent === selectedFriend) {
+        option.selected = true;
+        break;
+      }
+    }
+  }
+
+const friendSelect = document.querySelector('.friend-dropdown select');
+if (friendSelect) {
+  friendSelect.addEventListener('change', function () {
+    const selected = this.value;
+    const base = window.location.pathname.split('/').pop(); 
+    window.location.href = `${base}?friend=${encodeURIComponent(selected)}`;
+  });
+}
+
 });
