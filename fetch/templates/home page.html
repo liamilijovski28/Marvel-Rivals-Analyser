@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvel Rivals Analyser</title>
+    <link rel="stylesheet" href = "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <nav>
+          <ul>
+            <li><a class="active" href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="Friends.html">Friends</a></li>
+            <li><a href="{{ url_for('heroes') }}">Heroes</a></li>
+            <li><a href="matches.html">Matches</a></li>
+            <li><a href="compare.html">Compare</a></li>
+          </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+        <h1>Welcome to Marvel Rivals Analyser</h1>
+        <div class="stats-container" id="user-stats">
+            <div class = "stat-card">
+                <div class = "stat-title">Wins</div>
+                <div class = "stat-value">{{ player["wins"] }}</div>
+                
+            </div>
+
+            <div class = "stat-card">
+                <div class = "stat-title">Losses</div>
+                <div class = "stat-value">{{ player["losses"] }} </div>
+                
+            </div>
+
+            <div class = "stat-card">
+                <div class = "stat-title">Matches Played</div>
+                <div class = "stat-value">{{ player["matches"] }}</div>
+                
+            </div>
+
+            <div class = "stat-card">
+                <div class = "stat-title">Win Rate</div>
+                <div class = "stat-value">{{ player["win_rate"] }}</div>
+                
+            </div>
+
+            <div class = "stat-card">
+                <div class = "stat-title">K/D</div>
+                <div class = "stat-value">{{ player["kd"] }}</div>
+                
+            </div>
+        </div>
+    </div>
+
+    
+
+                
+
+</body>
+</html>
