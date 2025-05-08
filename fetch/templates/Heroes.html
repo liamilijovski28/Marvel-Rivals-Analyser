@@ -7,16 +7,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Pineapple.css') }}">
 </head>
 <body>
+    {% set current_path = request.path %}
+
     <header class="navbar">
-        <nav>
-          <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="Friends.html">Friends</a></li>
-            <li><a class="active" href="{{ url_for('heroes') }}">Heroes</a></li>
-            <li><a href="{{ url_for('matches') }}">Matches</a></li>
-            <li><a  href="compare.html">Compare</a></li>
-          </ul>
-        </nav>
+        <nav class="navbar">
+            <ul>
+              <li>
+                <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+              </li>
+              <li>
+                <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
+              </li>
+              <li>
+                <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
+              </li>
+              <li>
+                <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
+              </li>
+              <li>
+                <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
+              </li>
+            </ul>
+          </nav>
       </header>
 
     <main class="content-area">
