@@ -3,23 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Marvel Rivals - Compare</title>
-  <link rel="stylesheet" href="style_Pineapple.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Pineapple.css') }}">
 </head>
 <body>
+  {% set current_path = request.path %}
   <header class="navbar">
-    <nav>
+    <nav class="navbar">
       <ul>
-        <li><a href="home page.html">Home</a></li>
-        <li><a href="Friends.html">Friends</a></li>
-        <li><a href="Heroes.html">Heroes</a></li>
-        <li><a href="matches.html">Matches</a></li>
-        <li><a class="active" href="compare.html">Compare</a></li>
+        <li>
+          <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
+        </li>
       </ul>
     </nav>
   </header>
 
   <section class="banner-container">
-    <img class="banner-img" src="images/banner.png" alt="Marvel Rivals Banner">
+    <img src="{{ url_for('static', filename='styles/images/banner.png') }}" alt="Marvel Rivals Banner" class="banner-img" />
     <div class="vs-container">
       <div class="player">
         <img src="images/profile-placeholder.png" alt="Your profile">

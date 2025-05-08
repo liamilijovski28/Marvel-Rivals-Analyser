@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friends</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Pineapple.css') }}">
+</head>
+<body>
+  {% set current_path = request.path %}
+
+  <header class="navbar">
+    <nav class="navbar">
+      <ul>
+        <li>
+          <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
+        </li>
+        <li>
+          <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
+    <h1 class="friends-title">Friends</h1>
+
+    <section class="friends-list">
+
+      <div class="friend-block">
+        <div class="friend-name">Sp1dermain</div>
+        <div class="friend-actions">
+          <a class="friend-button compare" href="compare.html?friend=Sp1dermain">Compare</a>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="friend-block">
+        <div class="friend-name">scOOP</div>
+        <div class="friend-actions">
+          <a class="friend-button compare" href="compare.html?friend=scOOP">Compare</a>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="friend-block">
+        <div class="friend-name">Krunk</div>
+        <div class="friend-actions">
+          <a class="friend-button compare" href="compare.html?friend=Krunk">Compare</a>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="friend-block">
+        <div class="friend-name">ferret88</div>
+        <div class="friend-actions">
+          <a class="friend-button compare" href="compare.html?friend=ferret88">Compare</a>
+          <div class="dropdown">
+            <button class="dropdown-toggle">...</button>
+            <div class="dropdown-menu">
+              <button class="remove-friend-dropdown">Remove Friend</button>
+              <button class="remove-friend-dropdown">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="Friends.js"></script>
+
+</body>
+</html>
