@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Match History</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Izzy.css') }}">
+  <script src="{{ url_for('static', filename='js/hero_page.js') }}" defer></script>
+  <script>
+    const heroPlaceholder = "{{ url_for('static', filename='styles/images/hero_placeholder.png') }}";
+  </script>
+</head>
+  
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul>
+      <li><a class="active" href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('friends') }}">Friends</a></li>
+      <li><a href="{{ url_for('heroes') }}">Heroes</a></li>
+      <li><a href="{{ url_for('matches') }}">Matches</a></li>
+      <li><a href="{{ url_for('compare') }}">Compare</a></li>
+    </ul>
+  </nav>
+
+  <!-- Profile Header Section -->
+  <section id="profile-header">
+    <div id="profile-banner">
+      <img src="{{ url_for('static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
+      <div id="overlay"></div>
+      <div id="profile-info-wrapper">
+        <div id="profile-picture">
+          <img src="{{ url_for('static', filename='styles/images/profilepic.jpg') }}" alt="Profile Picture" />
+        </div>
+        <div id="player-meta">
+          <h1 id="playerName">{{ display_name }}</h1>
+          <p><span class="eye"></span> 882 Views</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- Player Summary Card -->
+<section id="player-summary">
+  <div class="summary-card">
+    <div class="summary-stat">
+      <p class="stat-label">Matches</p>
+      <p class="stat-value">{{ stats.matches }}</p>
+    </div>
+    <div class="summary-stat">
+      <p class="stat-label">Wins</p>
+      <p class="stat-value">{{ stats.wins }}</p>
+    </div>
+    <div class="summary-stat">
+      <p class="stat-label">Losses</p>
+      <p class="stat-value">{{ stats.losses }}</p>
+    </div>
+    <div class="summary-stat">
+      <p class="stat-label">K/D</p>
+      <p class="stat-value">{{ stats.kd }}</p>
+    </div>
+    <div class="summary-stat">
+      <p class="stat-label">Win %</p>
+      <p class="stat-value">{{ stats.win_rate }}%</p>
+    </div>
+  </div>
+</section>
+
+  <!-- Matches Section -->
+  <div id="matches"></div>
+
+  <script>
+    const username = "{{ username }}";
+    const heroMap = {};
+
+    async function loadHeroes() {
+      const res = await fetch("/api/heroes");
+      const heroes = await res.json();
+      heroes.forEach(h => heroMap[h.hero_id] = h.hero_name);
+    }
+
+    async function loadMatches() {
+      const res = await fetch(`/api/player/${username}/matches`);
+      const data = await res.json();
+      const container = document.getElementById("matches");
+
+      if (!data.match_history) {
+        container.innerHTML = "No match history.";
+        return;
+      }
+
+      data.match_history.forEach(match => {
+        const player = match.match_player;
+        const heroName = player.player_hero ? player.player_hero.hero_name : "Unknown";  
+        const playerCamp = player.camp;
+        const matchWinner = match.match_winner_side;
+        const isWin = playerCamp !== null && matchWinner !== null && playerCamp === matchWinner ? "Victory" : "Defeat";
+        const kda = `${player.kills}/${player.deaths}/${player.assists}`;
+
+        const scoreInfo = player.score_info; 
+        let rs = scoreInfo ? (scoreInfo.add_score || "Not Available") : "Not Available"; 
+        if (typeof rs === "number") rs = Math.round(rs);
+
+        const date = new Date(match.match_time_stamp * 1000).toLocaleString();
+
+        const div = document.createElement("div");
+        div.className = "match-card";
+        div.innerHTML = `
+          <div class="match-info-left">
+            <img src="${heroPlaceholder}" alt="${heroName}" class="hero-icon">
+            <div>
+              <strong class="hero-name">${heroName}</strong>
+              <span class="result ${isWin === "Victory" ? 'win' : 'loss'}">${isWin}</span>
+            </div>
+          </div>
+          <div class="match-stats">
+            <p class="kda">K/D/A: ${kda}</p>
+            <p class="rs-change">RS Change: ${rs}</p>
+            <p class="date">Date: ${date}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    (async () => {
+      await loadHeroes();
+      await loadMatches();
+    })();
+  </script>
+</body>
+</html>

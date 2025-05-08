@@ -1,2 +1,2 @@
-FLASK_APP=MRAnalyser.py
+FLASK_APP=fetch
 FLASK_ENV=development

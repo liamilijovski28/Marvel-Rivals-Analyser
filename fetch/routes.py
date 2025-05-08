@@ -1,6 +1,7 @@
 from flask import render_template
 from fetch import app
 import requests
+from flask import jsonify
 
 
 
@@ -94,3 +95,69 @@ def heroes():
  
 
     return render_template('Heroes.html', title = 'Heroes', heroes = ranked_heroes, all_heroes = all_heroes)
+
+@app.route('/matches')
+def matches():
+    player_id = "813581637"
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    response = requests.get(url, headers=headers).json()
+
+    print("== Player Profile Response ==")
+    print(response)
+
+
+    display_name = response.get("name", "Unknown")
+    ranked = response['overall_stats']['ranked']
+    unranked = response['overall_stats']['unranked']
+
+    kills = ranked['total_kills'] + unranked['total_kills']
+    deaths = ranked['total_deaths'] + unranked['total_deaths']
+    matches_played = response['overall_stats']['total_matches']
+    wins = response['overall_stats']['total_wins']
+
+    stats = {
+        "kd": round(kills / deaths, 2) if deaths > 0 else kills,
+        "matches": matches_played,
+        "wins": wins,
+        "losses": matches_played - wins,
+        "win_rate": round((wins / matches_played) * 100, 2) if matches_played > 0 else 0
+    }
+
+
+    return render_template("matches.html", username=player_id, display_name=display_name, stats=stats)
+
+@app.route('/api/player/<player_id>/matches')
+def player_matches(player_id):
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}/match-history"
+    response = requests.get(url, headers=headers)
+
+    return jsonify(response.json())
+
+
+@app.route('/api/heroes')
+def get_heroes():
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    url = "https://marvelrivalsapi.com/api/v1/heroes"
+    response = requests.get(url, headers=headers)
+
+    return jsonify(response.json())
+
+
+@app.route("/friends")
+def friends():
+    return render_template("Friends.html")
+
+@app.route("/compare")
+def compare():
+    return render_template("compare.html")
