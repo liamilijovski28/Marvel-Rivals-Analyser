@@ -4,6 +4,8 @@ import requests
 from flask import jsonify
 from flask import render_template, redirect, url_for, flash
 from fetch.forms import LoginForm, SignupForm
+from flask import render_template, redirect, url_for, flash
+from fetch.forms import LoginForm, SignupForm
 
 
 @app.route('/home')
@@ -161,10 +163,6 @@ def friends():
 @app.route("/compare")
 def compare():
     return render_template("compare.html")
-
-@app.route("/settings")
-def settings():
-    return render_template("settings.html")
 
 @app.route("/settings")
 def settings():
