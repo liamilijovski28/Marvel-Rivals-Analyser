@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
+
+            <h1>Login</h1>
+            <p>Welcome back! Please enter your account details to log in.</p>
+
+            <label for="username">Account Name:</label>
+            {{ form.username(id="username") }}
+            <br>
+
+            <label for="password">Password:</label>
+            {{ form.password(id="password") }}
+            <br>
+
+            <button type="submit" class="form-button">Login</button>
+            <br>
+
+            <p>New to the platform? <a href="{{ url_for('signup') }}">Signup here</a>.</p>
+        </form>
+    </div>
+</body>
+</html>
