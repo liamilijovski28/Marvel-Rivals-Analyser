@@ -10,7 +10,7 @@
     {% set current_path = request.path %}
 
     <header class="navbar">
-        <nav class="navbar">
+        <nav>
             <ul>
               <li>
                 <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
@@ -27,6 +27,7 @@
               <li>
                 <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
               </li>
+              <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
             </ul>
           </nav>
     </header>

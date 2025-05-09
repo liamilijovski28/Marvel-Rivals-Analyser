@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+  <title>Settings</title>
+</head>
+<body>
+  {% set current_path = request.path %}
+ 
+  <header class="navbar">
+    <nav>
+      <ul>
+        <li><a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a></li>
+        <li><a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a></li>
+        <li><a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a></li>
+        <li><a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a></li>
+        <li><a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a></li>
+        <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div>
+    <h1>Settings</h1>
+    <form>
+      <!-- Change Username -->
+      <div>
+        <label for="new-username">New Username</label>
+        <input type="text" id="new-username" name="new-username">
+      </div>
+      <!-- Change Password -->
+      <div>
+        <label for="new-password">New Password</label>
+        <input type="password" id="new-password" name="new-password">
+      </div>
+
+      <!-- Submit Changes -->
+      <div style="margin-bottom: 5%;">
+        <button type="submit">Save New Username and Password</button>
+      </div>
+      <div>
+        <button type="submit">Select Player Icon</button>
+      </div>
+
+      <!-- Data Sharing Settings -->
+      <div>
+        <label for="data-sharing">Share my data with others:</label>
+        <select id="data-sharing" name="data-sharing">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <!-- Restrict Specific Friends (Visible only if data-sharing is Yes) -->
+      <div id="restricted-friends-container">
+        <label for="restricted-friends">Restricted Friends:</label>
+        <input type="text" id="restricted-friends" name="restricted-friends" placeholder="Enter friend names separated by commas">
+      </div>
+
+      <!-- Close Account -->
+      <div>
+        <button type="button">Close Account</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

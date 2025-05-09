@@ -1,3 +1,8 @@
+# Running instructions
+1. Download and unzip the repository
+2. begin a virtual enviornment using the python -m venv venv command 
+3. Install all the relevant pip commands using pip install -r requirements.txt
+4. Run the server using flask run
 # Marvel Rivals Analyser
 This project will analyse the gameplay of users, both on a per match, and over career basis. Whilst other stats and trackers apps exist (both in-game & third-party), this project takes a deeper look at the statistics, rather than just providing general win rate information.
 

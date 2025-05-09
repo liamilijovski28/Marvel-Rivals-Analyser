@@ -161,3 +161,7 @@ def friends():
 @app.route("/compare")
 def compare():
     return render_template("compare.html")
+
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
