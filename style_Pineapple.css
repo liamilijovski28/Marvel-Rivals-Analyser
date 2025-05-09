@@ -1,0 +1,475 @@
+  body {
+    margin: 0;
+    padding-bottom: 120px;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0e0e0e;
+    color: #fff;
+  }
+
+  /* Navbar same as before */
+  .navbar{
+    background:#000;
+    padding:1rem;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:1000;
+  }
+  .navbar ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    gap:3rem;
+    justify-content:center;
+  }
+  .navbar a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block; 
+  }
+
+  .navbar a:hover, .navbar a.active {
+    color: #ffd700;
+    transform: scale(1.1);
+  }
+
+  /* Banner + VS overlay */
+  .banner-container{
+    position:relative;
+    width:100%;
+  }
+  .banner-img{
+    width:100%;
+    height:auto;
+    display:block;
+    object-fit:cover;
+  }
+  .vs-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26,26,26,0.85);
+    padding: 1rem 3rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    width: 100%;
+    justify-content: center;
+  }
+  .vs-container img{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    border:3px solid #fff;
+  }
+  .vs{
+    font-size:1.8rem;
+    font-weight:bold;
+  }
+  .name {
+    display: block;
+    text-align: center;
+    margin-top: 0.4rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  /* Tabs */
+  .tabs-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem auto 0 auto;
+    max-width: 1600px;
+    padding: 0 1rem;
+  }
+
+  .cluster {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .friend-select-wrap {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .friend-label {
+    font-size: 1rem;  
+    background: #2a2a2a;  
+    padding:0.6rem 1.6rem;
+    border-radius: 10px;
+    color: white; 
+    white-space: nowrap;
+  }
+
+  .friend-dropdown select {
+    padding:0.7rem 1.6rem;
+    background: #2a2a2a;
+    border-radius: 10px;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    appearance: none;
+    text-align: left;
+    text-align-last: center;
+  }
+
+  .tabs{
+    display:flex;
+    gap:1rem;
+  }
+  .tab {
+    padding: 0.6rem 1.6rem;
+    background: #2a2a2a;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: normal;
+    transition: color 0.2s, font-weight 0.2s;
+  }
+  
+  .tab:hover,.tab.active {
+    color: #ffd700;
+    font-weight: bold;
+  }
+  
+  .season-dropdown select{
+    padding:0.6rem;
+    background:#2a2a2a;
+    border:none;
+    border-radius:10px;
+    color:#fff;
+    font-size: 1rem;
+  }
+
+  /* Content */
+  .content-area{
+    max-width:1200px;
+    margin:2rem auto 6rem;
+    padding:0 1rem;
+  }
+
+  /* Stat boxes general */
+  .stat-box{
+    background:#1a1a1a;
+    padding:1.2rem;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(255,255,255,0.03);
+  }
+  .stat-title{
+    text-align:center;
+    font-size:1.4rem;
+    margin-bottom:0.8rem;
+    font-weight:bold;
+  }
+
+  /* Overall flex */
+  .overall-flex{
+    display:flex;
+    gap:2rem;
+    justify-content:center;
+  }
+  .overall-box{
+    flex:1;
+  }
+  .stat-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:0.5rem;
+  }
+  .stat-label{
+    font-weight:bold;
+    font-size:1rem;
+  }
+  .stat-value{
+    background:#121212;
+    padding:0.4rem 0.6rem;
+    border-radius:5px;
+    min-width:90px;
+    text-align:center;
+    font-size:1rem;
+  }
+
+  /* Highlight */
+  .highlight{
+    background:#204020;
+    color:#aaffaa;
+  }
+
+  /* Roster flex (heroes/roles) */
+  .roster-flex{
+    display:flex;
+    gap:1rem;
+    overflow-x:auto;
+  }
+  .roster-list{
+    flex:0 0 200px;
+  }
+  .roster-item {
+    background: #121212;
+    margin-bottom: 0.4rem;
+    border-radius: 4px;
+    text-align: center;
+    padding: 0.4rem;
+    font-size: 0.95rem;
+    flex: 1;
+    font-weight: bold;
+  }
+
+  .roster-side{
+    flex:1;
+  }
+  .roster-row{
+    display:flex;
+    justify-content:space-between;
+    gap:0.3rem;
+    margin-bottom:0.4rem;
+  }
+  .sub-stat{
+    flex:1;
+    background:#121212;
+    padding:0.4rem;
+    border-radius:4px;
+    text-align:center;
+    font-size:0.95rem;
+  }
+
+  /* roster header */
+  .roster-header{
+    display:flex;
+    justify-content:space-between;
+    gap:0.3rem;
+    margin-bottom:0.5rem;
+  }
+  .sub-head{
+    flex:1;
+    background:#2a2a2a;
+    padding:0.4rem;
+    border-radius:4px;
+    text-align:center;
+    font-weight:bold;
+    font-size:0.95rem;
+  }
+
+  /* label darker box */
+  .stat-label{
+    background:#121212;
+    padding:0.4rem 0.6rem;
+    border-radius:4px;
+    margin-right:0.5rem;
+    flex:1;
+  }
+
+  /* ensure highlight overrides sub-stat */
+  .sub-stat.highlight{
+    background:#204020 !important;
+    color:#aaffaa;
+  }
+
+  /* BELOW IS NEW STYLING FOR FRIENDS PAGE TEST */
+  .friends-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .friend-block {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .friend-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .friend-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  .friend-button {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background: #2a2a2a;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .friend-button.compare {
+    text-decoration: none; 
+  }  
+
+  .friend-button.compare:hover {
+    background: #204020;
+  }
+
+  .friend-button.remove {
+    background: #600;
+  }
+
+  .friend-button.remove:hover {
+    background: #900;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-toggle {
+    background: #2a2a2a;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .dropdown.show .dropdown-toggle {
+    background: #3a3a3a; 
+  }
+
+  .dropdown-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    min-width: 160px;
+  }
+
+  .dropdown-menu button {
+    width: 100%; 
+    background: none;
+    border: none;
+    padding: 0.8rem 1rem;
+    color: white;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .dropdown-menu button:hover {
+    background: #333;
+  }
+
+  .dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+ /* HEROES PAGE STYLING */
+.class-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 2rem 0 1rem;
+}
+
+.hero-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.hero-item {
+  background: #1a1a1a;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 220px;
+  height: 35px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  overflow: hidden; 
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.hero-item.open {
+  height: auto;
+}
+
+
+.hero-item:hover {
+  transform: scale(1.03);
+  background: #222;
+}
+
+.hero-name {
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.hero-stats {
+  display: none;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+.hero-stats.show {
+  display: block;
+}
+
+.expand-controls {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.expand-controls button {
+  padding: 0.7rem 1.5rem;
+  background: #2a2a2a;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.expand-controls button:hover {
+  background: #444;
+}
