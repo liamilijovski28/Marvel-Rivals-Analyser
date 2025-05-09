@@ -10,7 +10,7 @@ from flask import jsonify
 def home():
     player_id = "813581637"
     
-    url = "https://marvelrivalsapi.com/api/v1/player/" + player_id
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
@@ -33,7 +33,7 @@ def home():
 def heroes():
     player_id = "813581637"
 
-    url = "https://marvelrivalsapi.com/api/v1/player/" + player_id
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
@@ -60,8 +60,8 @@ def heroes():
         items = len(response["heroes_" + rank_type]) 
         while index < (items):#loops through hero data returned from the request, storing all stats in a dict nested in a dict
             current_hero = response["heroes_" + rank_type][index]
-            heroes[current_hero['hero_name']] = {"assists":current_hero["assists"], "damage":current_hero["damage"], 
-            "damage_taken":current_hero["damage_taken"], "deaths": current_hero["deaths"], "healing":current_hero["heal"], 
+            heroes[current_hero['hero_name'].title()] = {"assists":current_hero["assists"], "damage":round(current_hero["damage"],2), 
+            "damage_blocked":round(current_hero["damage_taken"],2), "deaths": current_hero["deaths"], "healing":round(current_hero["heal"]), 
             "kills":current_hero["kills"], "matches":current_hero["matches"], "wins":current_hero["wins"], "mvp":current_hero["mvp"],
             "svp":current_hero["svp"], "win_rate": calc_wr(current_hero["matches"], current_hero["wins"]), 
             "kd": calc_kd(current_hero["kills"], current_hero["deaths"])}
@@ -71,21 +71,21 @@ def heroes():
     
     def fill_null_heroes(hero_data, all_heroes, hero_class):#adds all heroes that there is no data for in a set of hero data (automatically 0 in all stats)
         for foo in all_heroes[hero_class]:
-            if (foo.lower() in hero_data) == False:
-                hero_data[foo.lower()] = {"assists":0,"damage":0,"damage_taken":0,"deaths":0,"healing":0,"kills":0,
+            if (foo in hero_data) == False:
+                hero_data[foo.title()] = {"assists":0,"damage":0,"damage_blocked":0,"deaths":0,"healing":0,"kills":0,
                 "matches":0,"wins":0,"mvp":0,"svp":0, "win_rate":0}
         return hero_data
 
     ranked_heroes = get_hero_data(response, "ranked")
     #unranked_heroes = get_hero_data(response, "unranked")
 
-    all_heroes = {"vanguard": ["captain america", "doctor strange", "emma frost", "groot", "hulk", "magneto", "peni parker", 
-    "the thing", "thor", "venom"], "strategist" : ["adam warlock", 
-    "cloak & dagger", "Invisible Woman", "jeff the land shark", "loki", "luna snow", 
-    "mantis", "rocket raccoon"], "duelist" : ["black panther", "black widow", "hawkeye", "hela", "human torch", 
-    "iron fist", "iron Man", "magik",
-    "mister fantastic", "moon knight", "namor", "psylocke", "scarlet witch", "spiderman", "squirrel girl", "star-lord",
-    "storm", "the punisher", "winter soldier", "wolverine"]}
+    all_heroes = {"vanguard": ["Captain America", "Doctor Strange", "Emma Frost", "Groot", "Hulk", "Magneto", "Peni Parker", 
+    "The Thing", "Thor", "Venom"], "strategist" : ["Adam Warlock", 
+    "Cloak & Dagger", "Invisible Woman", "Jeff the Land Shark", "Loki", "Luna Snow", 
+    "Mantis", "Rocket Raccoon"], "duelist" : ["Black Panther", "Black Widow", "Hawkeye", "Hela", "Human Torch", 
+    "Iron Fist", "Iron Man", "Magik",
+    "Mister Fantastic", "Moon Knight", "Namor", "Psylocke", "Scarlet Witch", "Spiderman", "Squirrel Girl", "Star-Lord",
+    "Storm", "The Punisher", "Winter Soldier", "Wolverine"]}
 
     for h_class in ["vanguard", "strategist", "duelist"]:
         ranked_heroes = fill_null_heroes(ranked_heroes.copy(), all_heroes, h_class)
