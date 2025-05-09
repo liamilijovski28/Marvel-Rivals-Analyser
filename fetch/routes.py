@@ -166,6 +166,10 @@ def compare():
 def settings():
     return render_template("settings.html")
 
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
+
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
