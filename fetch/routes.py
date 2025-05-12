@@ -2,10 +2,11 @@ from flask import render_template
 from fetch import app
 import requests
 from flask import jsonify
+from fetch.forms import LoginForm, SignupForm
+from flask import render_template, redirect, url_for, flash
 
 
 
-@app.route('/')
 @app.route('/home')
 def home():
     player_id = "813581637"
@@ -174,3 +175,29 @@ def friends():
 @app.route("/compare")
 def compare():
     return render_template("compare.html")
+
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
+
+@app.route('/')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Add your login logic here
+        username = form.username.data
+        password = form.password.data
+        flash('Logged in successfully!', 'success')
+        return redirect(url_for('home')) 
+    return render_template('login.html', form=form)
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    form = SignupForm()
+    if form.validate_on_submit():
+        # Add your user creation logic here
+        flash("Account created successfully!", "success")
+        return redirect(url_for('home'))
+    return render_template("signup.html", form=form)
