@@ -5,91 +5,179 @@
   <title>Match History</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Izzy.css') }}">
   <script src="{{ url_for('static', filename='js/hero_page.js') }}" defer></script>
-  <script>
-    const heroPlaceholder = "{{ url_for('static', filename='styles/images/hero_placeholder.png') }}";
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
-  
+
 <body>
   {% set current_path = request.path %}
 
   <!-- Navigation Bar -->
   <nav class="navbar">
-    <ul>
-      <li>
-        <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
-      </li>
-      <li>
-        <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
-      </li>
-      <li>
-        <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
-      </li>
-      <li>
-        <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
-      </li>
-      <li>
-        <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
-      </li>
-      <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
+    <li>
+      <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+    </li>
+    <li>
+      <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
+    </li>
+    <li>
+      <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
+    </li>
+    <li>
+      <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
+    </li>
+    <li>
+      <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
+    </li>
+    <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
 
-    </ul>
-  </nav>
-
-  <!-- Profile Header Section -->
-  <section id="profile-header">
-    <div id="profile-banner">
-      <img src="{{ url_for('static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
-      <div id="overlay"></div>
-      <div id="profile-info-wrapper">
-        <div id="profile-picture">
-          <img src="{{ url_for('static', filename='styles/images/profilepic.jpg') }}" alt="Profile Picture" />
-        </div>
-        <div id="player-meta">
-          <h1 id="playerName">{{ display_name }}</h1>
-          <p><span class="eye"></span> 882 Views</p>
+  <!-- Profile Banner + Summary -->
+  <section class="profile-section">
+    <section id="profile-header">
+      <div id="profile-banner">
+        <img src="{{ url_for('static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
+        <div id="overlay"></div>
+        <div id="profile-info-wrapper">
+          <div id="profile-picture">
+            <img src="{{ url_for('static', filename='styles/images/profilepic.jpg') }}" alt="Profile Picture" />
+          </div>
+          <div id="player-meta">
+            <h1 id="playerName">{{ display_name }}</h1>
+            <p><span class="eye"></span> 882 Views</p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section id="player-summary">
+      <div class="summary-card">
+        <div class="summary-stat">
+          <p class="stat-label">Matches</p>
+          <p class="stat-value">{{ stats.matches }}</p>
+        </div>
+        <div class="summary-stat">
+          <p class="stat-label">Wins</p>
+          <p class="stat-value">{{ stats.wins }}</p>
+        </div>
+        <div class="summary-stat">
+          <p class="stat-label">Losses</p>
+          <p class="stat-value">{{ stats.losses }}</p>
+        </div>
+        <div class="summary-stat">
+          <p class="stat-label">K/D</p>
+          <p class="stat-value">{{ stats.kd }}</p>
+        </div>
+        <div class="summary-stat">
+          <p class="stat-label">Win %</p>
+          <p class="stat-value">{{ stats.win_rate }}%</p>
+        </div>
+      </div>
+    </section>
   </section>
 
-<!-- Player Summary Card -->
-<section id="player-summary">
-  <div class="summary-card">
-    <div class="summary-stat">
-      <p class="stat-label">Matches</p>
-      <p class="stat-value">{{ stats.matches }}</p>
-    </div>
-    <div class="summary-stat">
-      <p class="stat-label">Wins</p>
-      <p class="stat-value">{{ stats.wins }}</p>
-    </div>
-    <div class="summary-stat">
-      <p class="stat-label">Losses</p>
-      <p class="stat-value">{{ stats.losses }}</p>
-    </div>
-    <div class="summary-stat">
-      <p class="stat-label">K/D</p>
-      <p class="stat-value">{{ stats.kd }}</p>
-    </div>
-    <div class="summary-stat">
-      <p class="stat-label">Win %</p>
-      <p class="stat-value">{{ stats.win_rate }}%</p>
-    </div>
-  </div>
-</section>
+<!-- Matches Page Layout: Heatmap Left, Match History Right -->
+<div class="match-page-container">
 
-  <!-- Matches Section -->
-  <div id="matches"></div>
+  <!-- Sidebar Heatmap -->
+  <aside id="heatmap-sidebar">
+    <h3>Match Activity - Last 60 Days</h3>
+    <div id="heatmap-container">
+      <div id="day-labels">
+        <span>Sun</span>
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+      </div>
+      <div id="heatmap-grid"></div>
+    </div>
+    <div class="legend">
+      <span class="dot level-0"></span> 0
+      <span class="dot level-1"></span> 1–2
+      <span class="dot level-2"></span> 3–5
+      <span class="dot level-3"></span> 6–8
+      <span class="dot level-4"></span> 9+
+    </div>
+  </aside>
 
+  <!-- Match History Cards -->
+  <section id="matches"></section>
+
+</div>
+
+  <!-- JavaScript -->
   <script>
     const username = "{{ username }}";
+
+    const heroImageMap = {
+      "adam warlock": "adamwarlock.png",
+      "black panther": "blackpanther.png",
+      "black widow": "blackwidow.png",
+      "captain america": "captainamerica.png",
+      "cloak & dagger": "cloak&dagger.png",
+      "doctor strange": "doctorstrange.png",
+      "emma frost": "emmafrost.png",
+      "groot": "groot.png",
+      "hawkeye": "hawkeye.png",
+      "hela": "hela.png",
+      "hulk": "hulk.png",
+      "magneto": "magneto.png"
+    };
+
+    function getHeroImagePath(heroNameRaw) {
+      const heroName = heroNameRaw.trim().toLowerCase();
+      const filename = heroImageMap[heroName];
+      if (!filename) {
+        return "{{ url_for('static', filename='styles/images/hero_placeholder.png') }}";
+      }
+      return `/static/styles/images/heroes/${filename}`;
+    }
+
     const heroMap = {};
 
     async function loadHeroes() {
       const res = await fetch("/api/heroes");
       const heroes = await res.json();
       heroes.forEach(h => heroMap[h.hero_id] = h.hero_name);
+    }
+
+    function formatDate(ts) {
+      const options = { month: 'short', day: 'numeric' };
+      return new Date(ts * 1000).toLocaleDateString(undefined, options);
+    }
+
+    function groupMatchesByDate(matchHistory) {
+      const dailyMap = {};
+      matchHistory.forEach(match => {
+        const date = new Date(match.match_time_stamp * 1000);
+        const key = date.toISOString().split("T")[0]; // YYYY-MM-DD
+        dailyMap[key] = (dailyMap[key] || 0) + 1;
+      });
+      return dailyMap;
+    }
+
+    function renderHeatmap(dailyCounts) {
+      const heatmap = document.getElementById("heatmap-grid");
+      const today = new Date();
+
+      for (let i = 59; i >= 0; i--) {
+        const day = new Date(today);
+        day.setDate(day.getDate() - i);
+        const key = day.toISOString().split("T")[0];
+        const count = dailyCounts[key] || 0;
+
+        let level = 0;
+        if (count >= 9) level = 4;
+        else if (count >= 6) level = 3;
+        else if (count >= 3) level = 2;
+        else if (count >= 1) level = 1;
+
+        const cell = document.createElement("div");
+        cell.className = `heatmap-cell level-${level}`;
+        cell.title = `${key}: ${count} match${count !== 1 ? "es" : ""}`;
+        heatmap.appendChild(cell);
+      }
     }
 
     async function loadMatches() {
@@ -102,37 +190,63 @@
         return;
       }
 
+      const dailyCounts = groupMatchesByDate(data.match_history);
+      renderHeatmap(dailyCounts);
+
+      const grouped = {};
       data.match_history.forEach(match => {
-        const player = match.match_player;
-        const heroName = player.player_hero ? player.player_hero.hero_name : "Unknown";  
-        const playerCamp = player.camp;
-        const matchWinner = match.match_winner_side;
-        const isWin = playerCamp !== null && matchWinner !== null && playerCamp === matchWinner ? "Victory" : "Defeat";
-        const kda = `${player.kills}/${player.deaths}/${player.assists}`;
+        const dateKey = formatDate(match.match_time_stamp);
+        if (!grouped[dateKey]) grouped[dateKey] = [];
+        grouped[dateKey].push(match);
+      });
 
-        const scoreInfo = player.score_info; 
-        let rs = scoreInfo ? (scoreInfo.add_score || "Not Available") : "Not Available"; 
-        if (typeof rs === "number") rs = Math.round(rs);
+      Object.keys(grouped).forEach(date => {
+        const matches = grouped[date];
+        const wins = matches.filter(m => {
+          const p = m.match_player;
+          return p.camp && m.match_winner_side && p.camp === m.match_winner_side;
+        }).length;
 
-        const date = new Date(match.match_time_stamp * 1000).toLocaleString();
+        const losses = matches.length - wins;
 
-        const div = document.createElement("div");
-        div.className = "match-card";
-        div.innerHTML = `
-          <div class="match-info-left">
-            <img src="${heroPlaceholder}" alt="${heroName}" class="hero-icon">
-            <div>
-              <strong class="hero-name">${heroName}</strong>
-              <span class="result ${isWin === "Victory" ? 'win' : 'loss'}">${isWin}</span>
+        const dayBlock = document.createElement("div");
+        dayBlock.className = "match-day";
+
+        const header = document.createElement("div");
+        header.className = "match-date-header";
+        header.innerHTML = `<span>${date}</span><span class="daily-summary">${wins} W // ${losses} L</span>`;
+        dayBlock.appendChild(header);
+
+        matches.forEach(match => {
+          const player = match.match_player;
+          const heroName = player.player_hero ? player.player_hero.hero_name : "Unknown";
+          const isWin = player.camp && match.match_winner_side && player.camp === match.match_winner_side ? "Victory" : "Defeat";
+          const kda = `${player.kills}/${player.deaths}/${player.assists}`;
+          const scoreInfo = player.score_info;
+          let rs = scoreInfo ? (scoreInfo.add_score || "Not Available") : "Not Available";
+          if (typeof rs === "number") rs = Math.round(rs);
+          const dateTime = new Date(match.match_time_stamp * 1000).toLocaleString();
+
+          const matchCard = document.createElement("div");
+          matchCard.className = "match-card";
+          matchCard.innerHTML = `
+            <div class="hero-image-container">
+              <img loading="lazy" src="${getHeroImagePath(heroName)}" alt="${heroName}">
+              <div class="hero-name">${heroName}</div>
+              <div class="kda">K/D/A: ${kda}</div>
             </div>
-          </div>
-          <div class="match-stats">
-            <p class="kda">K/D/A: ${kda}</p>
-            <p class="rs-change">RS Change: ${rs}</p>
-            <p class="date">Date: ${date}</p>
-          </div>
-        `;
-        container.appendChild(div);
+            <div class="match-details">
+              <div class="match-meta">
+                <p>RS Change: ${rs}</p>
+                <p>Date: ${dateTime}</p>
+              </div>
+              <div class="result ${isWin === "Victory" ? 'win' : 'loss'}">${isWin}</div>
+            </div>
+          `;
+          dayBlock.appendChild(matchCard);
+        });
+
+        container.appendChild(dayBlock);
       });
     }
 
