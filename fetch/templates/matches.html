@@ -22,9 +22,8 @@
     </ul>
   </nav>
 
-  <!-- Profile Banner + Summary Wrapped -->
+  <!-- Profile Banner + Summary -->
   <section class="profile-section">
-    <!-- Profile Header -->
     <section id="profile-header">
       <div id="profile-banner">
         <img src="{{ url_for('static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
@@ -41,7 +40,6 @@
       </div>
     </section>
 
-    <!-- Player Summary Card -->
     <section id="player-summary">
       <div class="summary-card">
         <div class="summary-stat">
@@ -68,10 +66,39 @@
     </section>
   </section>
 
-  <!-- Matches Section -->
-  <div id="matches"></div>
+<!-- Matches Page Layout: Heatmap Left, Match History Right -->
+<div class="match-page-container">
 
-  <!-- JS -->
+  <!-- Sidebar Heatmap -->
+  <aside id="heatmap-sidebar">
+    <h3>Match Activity - Last 60 Days</h3>
+    <div id="heatmap-container">
+      <div id="day-labels">
+        <span>Sun</span>
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+      </div>
+      <div id="heatmap-grid"></div>
+    </div>
+    <div class="legend">
+      <span class="dot level-0"></span> 0
+      <span class="dot level-1"></span> 1–2
+      <span class="dot level-2"></span> 3–5
+      <span class="dot level-3"></span> 6–8
+      <span class="dot level-4"></span> 9+
+    </div>
+  </aside>
+
+  <!-- Match History Cards -->
+  <section id="matches"></section>
+
+</div>
+
+  <!-- JavaScript -->
   <script>
     const username = "{{ username }}";
 
@@ -112,6 +139,39 @@
       return new Date(ts * 1000).toLocaleDateString(undefined, options);
     }
 
+    function groupMatchesByDate(matchHistory) {
+      const dailyMap = {};
+      matchHistory.forEach(match => {
+        const date = new Date(match.match_time_stamp * 1000);
+        const key = date.toISOString().split("T")[0]; // YYYY-MM-DD
+        dailyMap[key] = (dailyMap[key] || 0) + 1;
+      });
+      return dailyMap;
+    }
+
+    function renderHeatmap(dailyCounts) {
+      const heatmap = document.getElementById("heatmap-grid");
+      const today = new Date();
+
+      for (let i = 59; i >= 0; i--) {
+        const day = new Date(today);
+        day.setDate(day.getDate() - i);
+        const key = day.toISOString().split("T")[0];
+        const count = dailyCounts[key] || 0;
+
+        let level = 0;
+        if (count >= 9) level = 4;
+        else if (count >= 6) level = 3;
+        else if (count >= 3) level = 2;
+        else if (count >= 1) level = 1;
+
+        const cell = document.createElement("div");
+        cell.className = `heatmap-cell level-${level}`;
+        cell.title = `${key}: ${count} match${count !== 1 ? "es" : ""}`;
+        heatmap.appendChild(cell);
+      }
+    }
+
     async function loadMatches() {
       const res = await fetch(`/api/player/${username}/matches`);
       const data = await res.json();
@@ -121,6 +181,9 @@
         container.innerHTML = "No match history.";
         return;
       }
+
+      const dailyCounts = groupMatchesByDate(data.match_history);
+      renderHeatmap(dailyCounts);
 
       const grouped = {};
       data.match_history.forEach(match => {
