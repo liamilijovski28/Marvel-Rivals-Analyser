@@ -4,6 +4,7 @@ import requests
 from flask import jsonify
 from fetch.forms import LoginForm, SignupForm
 from flask import render_template, redirect, url_for, flash
+from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
 
 
 
@@ -185,11 +186,20 @@ def settings():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # Add your login logic here
+        from fetch.models import User  # Import your User model
+
+        # Check if the username exists in the database
         username = form.username.data
         password = form.password.data
-        flash('Logged in successfully!', 'success')
-        return redirect(url_for('home')) 
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            # If the username exists and the password is correct
+            flash('Logged in successfully!', 'success')
+            return redirect(url_for('home'))
+        else:
+            # If the username doesn't exist or the password is incorrect
+            flash('Invalid username or password. Please try again.', 'danger')
+            return redirect(url_for('login')) 
     return render_template('login.html', form=form)
 
 
@@ -197,7 +207,34 @@ def login():
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        # Add your user creation logic here
+        from fetch.models import User  # Import your User model
+        from fetch import db  # Import your database instance
+
+        username = form.username.data
+        password = form.password.data
+        player_id = form.player_id.data
+
+        # Check if the username already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash("Username already exists. Please choose a different one.", "danger")
+            return redirect(url_for('signup'))
+
+        # Hash the password before saving it to the database
+        hashed_password = generate_password_hash(password)
+
+        # Create a new user with the hashed password and add to the database
+        new_user = User(username=username, password=hashed_password, player_id=player_id)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            print("it worked")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", "danger")
+            return redirect(url_for('signup'))
+        
         flash("Account created successfully!", "success")
         return redirect(url_for('home'))
+    
     return render_template("signup.html", form=form)
