@@ -2,18 +2,25 @@ from flask import render_template
 from fetch import app
 import requests
 from flask import jsonify
+from fetch.forms import LoginForm, SignupForm
+from flask import render_template, redirect, url_for, flash
+from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
 
 
 
-@app.route('/')
 @app.route('/home')
 def home():
     player_id = "813581637"
-    
-    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
+
+    update_url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}/update"
+
+    update_response = requests.get(update_url, headers=headers)
+
+
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
 
     response = ( requests.get(url, headers=headers) ).json()
 
@@ -52,7 +59,7 @@ def heroes():
         else:
             return round((kills / deaths), 2)
 
-    
+
 
     def get_hero_data(response, rank_type):#rank type is either "ranked" or "unranked"
         heroes = {}
@@ -60,24 +67,21 @@ def heroes():
         items = len(response["heroes_" + rank_type]) 
         while index < (items):#loops through hero data returned from the request, storing all stats in a dict nested in a dict
             current_hero = response["heroes_" + rank_type][index]
-            heroes[current_hero['hero_name'].title()] = {"assists":current_hero["assists"], "damage":round(current_hero["damage"],2), 
-            "damage_blocked":round(current_hero["damage_taken"],2), "deaths": current_hero["deaths"], "healing":round(current_hero["heal"]), 
-            "kills":current_hero["kills"], "matches":current_hero["matches"], "wins":current_hero["wins"], "mvp":current_hero["mvp"],
-            "svp":current_hero["svp"], "win_rate": calc_wr(current_hero["matches"], current_hero["wins"]), 
-            "kd": calc_kd(current_hero["kills"], current_hero["deaths"])}
+            heroes[current_hero['hero_name'].title()] = {"assists":current_hero["assists"], "damage":current_hero["damage"], 
+            "damage_blocked":current_hero["damage_taken"], "deaths": current_hero["deaths"], "healing":current_hero["heal"], 
+            "kills":current_hero["kills"], "matches":current_hero["matches"], "wins":current_hero["wins"]}
             index = index + 1
         return heroes
-
     
     def fill_null_heroes(hero_data, all_heroes, hero_class):#adds all heroes that there is no data for in a set of hero data (automatically 0 in all stats)
         for foo in all_heroes[hero_class]:
             if (foo in hero_data) == False:
-                hero_data[foo.title()] = {"assists":0,"damage":0,"damage_blocked":0,"deaths":0,"healing":0,"kills":0,
-                "matches":0,"wins":0,"mvp":0,"svp":0, "win_rate":0}
+                hero_data[foo.title()] = {"assists":0,"damage":0,"damage_blocked":0,"deaths":0,"healing":0,
+                "kills":0,"matches":0,"wins":0}
         return hero_data
 
     ranked_heroes = get_hero_data(response, "ranked")
-    #unranked_heroes = get_hero_data(response, "unranked")
+    unranked_heroes = get_hero_data(response, "unranked")
 
     all_heroes = {"vanguard": ["Captain America", "Doctor Strange", "Emma Frost", "Groot", "Hulk", "Magneto", "Peni Parker", 
     "The Thing", "Thor", "Venom"], "strategist" : ["Adam Warlock", 
@@ -89,12 +93,23 @@ def heroes():
 
     for h_class in ["vanguard", "strategist", "duelist"]:
         ranked_heroes = fill_null_heroes(ranked_heroes.copy(), all_heroes, h_class)
+        unranked_heroes = fill_null_heroes(unranked_heroes.copy(), all_heroes, h_class)
 
-    #hero_data = {}
+    hero_agg = {} #aggregate hero data
+    for hero in ranked_heroes:
+        rHero = ranked_heroes[hero]
+        uHero = unranked_heroes[hero]
+        hero_agg[hero] = { "assists":round((rHero["assists"] + uHero["assists"]),2), 
+        "damage_blocked":round((rHero["damage_blocked"] + uHero["damage_blocked"]),2), "damage":round((rHero["damage"] + uHero["damage"]),2),   
+        "deaths":(rHero["deaths"] + uHero["deaths"]), "kills":(rHero["kills"] + uHero["kills"]), 
+        "healing":round((rHero["healing"] + uHero["healing"]),2), "matches":(rHero["matches"] + uHero["matches"]),
+        "wins":(rHero["wins"] + uHero["wins"]), "losses":((rHero["matches"] + uHero["matches"]) - (rHero["wins"] + uHero["wins"])),
+        "win_rate":calc_wr((rHero["matches"] + uHero["matches"]), (rHero["wins"] + uHero["wins"])), 
+        "kd":calc_kd((rHero["kills"] + uHero["kills"]), (rHero["deaths"] + uHero["deaths"]))}
 
  
 
-    return render_template('Heroes.html', title = 'Heroes', heroes = ranked_heroes, all_heroes = all_heroes)
+    return render_template('Heroes.html', title = 'Heroes', heroes = hero_agg, all_heroes = all_heroes)
 
 @app.route('/matches')
 def matches():
@@ -161,3 +176,65 @@ def friends():
 @app.route("/compare")
 def compare():
     return render_template("compare.html")
+
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
+
+@app.route('/')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        from fetch.models import User  # Import your User model
+
+        # Check if the username exists in the database
+        username = form.username.data
+        password = form.password.data
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            # If the username exists and the password is correct
+            flash('Logged in successfully!', 'success')
+            return redirect(url_for('home'))
+        else:
+            # If the username doesn't exist or the password is incorrect
+            flash('Invalid username or password. Please try again.', 'danger')
+            return redirect(url_for('login')) 
+    return render_template('login.html', form=form)
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    form = SignupForm()
+    if form.validate_on_submit():
+        from fetch.models import User  # Import your User model
+        from fetch import db  # Import your database instance
+
+        username = form.username.data
+        password = form.password.data
+        player_id = form.player_id.data
+
+        # Check if the username already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash("Username already exists. Please choose a different one.", "danger")
+            return redirect(url_for('signup'))
+
+        # Hash the password before saving it to the database
+        hashed_password = generate_password_hash(password)
+
+        # Create a new user with the hashed password and add to the database
+        new_user = User(username=username, password=hashed_password, player_id=player_id)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            print("it worked")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", "danger")
+            return redirect(url_for('signup'))
+        
+        flash("Account created successfully!", "success")
+        return redirect(url_for('home'))
+    
+    return render_template("signup.html", form=form)
