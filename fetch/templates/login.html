@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/signup-login.css') }}">
 </head>
-<body>
-    <div class="container">
+<body class="auth-page">
+    <div class="auth-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endwith %}
         <form method="POST" action="{{ url_for('login') }}">
             {{ form.hidden_tag() }}
 
             <h1>Login</h1>
-            <p>Welcome back! Please enter your account details to log in.</p>
+            <p>Welcome back! Enter your account details to log in.</p>
 
             <label for="username">Account Name:</label>
             {{ form.username(id="username") }}
@@ -24,9 +29,9 @@
 
             <button type="submit" class="form-button">Login</button>
             <br>
-
+        <div class="auth-link">
             <p>New to the platform? <a href="{{ url_for('signup') }}">Signup here</a>.</p>
-        </form>
+        </div>
     </div>
 </body>
 </html>
