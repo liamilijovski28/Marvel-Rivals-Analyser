@@ -21,7 +21,7 @@ body::before {
 }
 /* Navbar same as before */
 .navbar{
-    background:#000;
+    background:#000000;
     padding:1rem;
     text-align:center;
     position:sticky;

@@ -88,7 +88,7 @@ def heroes():
     "Cloak & Dagger", "Invisible Woman", "Jeff the Land Shark", "Loki", "Luna Snow", 
     "Mantis", "Rocket Raccoon"], "duelist" : ["Black Panther", "Black Widow", "Hawkeye", "Hela", "Human Torch", 
     "Iron Fist", "Iron Man", "Magik",
-    "Mister Fantastic", "Moon Knight", "Namor", "Psylocke", "Scarlet Witch", "Spiderman", "Squirrel Girl", "Star-Lord",
+    "Mister Fantastic", "Moon Knight", "Namor", "Psylocke", "Scarlet Witch", "Spider-man", "Squirrel Girl", "Star-Lord",
     "Storm", "The Punisher", "Winter Soldier", "Wolverine"]}
 
     for h_class in ["vanguard", "strategist", "duelist"]:
@@ -242,7 +242,6 @@ def signup():
             flash(f"An error occurred: {str(e)}", "danger")
             return redirect(url_for('signup'))
         
-        flash("Account created successfully!", "success")
         return redirect(url_for('home'))
     
     return render_template("signup.html", form=form)
