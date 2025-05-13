@@ -194,7 +194,6 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             # If the username exists and the password is correct
-            flash('Logged in successfully!', 'success')
             return redirect(url_for('home'))
         else:
             # If the username doesn't exist or the password is incorrect
@@ -212,13 +211,22 @@ def signup():
 
         username = form.username.data
         password = form.password.data
-        player_id = form.player_id.data
+        player_id = form.player_id.data.strip()
+        if not player_id.isdigit() or len(player_id) != 9:
+            flash("Player ID must be exactly 9 digits.", "danger")
+            return render_template("signup.html", form=form)
 
         # Check if the username already exists
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            flash("Username already exists. Please choose a different one.", "danger")
-            return redirect(url_for('signup'))
+            flash('Username already exists. Please choose something else.', 'danger')
+            return render_template("signup.html", form=form)
+        
+        # Check if the playerid already is connected to an account
+        existing_player = User.query.filter_by(player_id=player_id).first()
+        if existing_player:
+            flash("That Player ID is already linked to another account.", "danger")
+            return render_template("signup.html", form=form)
 
         # Hash the password before saving it to the database
         hashed_password = generate_password_hash(password)

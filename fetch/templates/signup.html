@@ -4,45 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/signup-login.css') }}">
 </head>
-<body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul>
+<body class="auth-page">
+    <div class="auth-container">
+        <h1>Sign Up</h1>
+        <p>Welcome! Please create an account to get started.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
                 {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
+                    <div class="flash-message {{ category }}">{{ message }}</div>
                 {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-    <div class="container">
+            {% endif %}
+        {% endwith %}
+
         <form method="POST" action="{{ url_for('signup') }}">
             {{ form.hidden_tag() }}
 
-            <h1>Sign Up</h1>
-            <p>Welcome! Please create an account to get started.</p>
-
             <label for="username">Username:</label>
-            {{ form.username(id='username', class_='form-input') }}
+            {{ form.username(id='username', class_='form-input', placeholder='Enter Username') }}
             {% if form.username.errors %}
                 <div class="form-error">{{ form.username.errors[0] }}</div>
             {% endif %}
 
             <label for="password">Password:</label>
-            {{ form.password(id='password', class_='form-input') }}
+            {{ form.password(id='password', class_='form-input', placeholder='********') }}
             {% if form.password.errors %}
                 <div class="form-error">{{ form.password.errors[0] }}</div>
             {% endif %}
+
             <label for="player_id">Player ID:</label>
-            {{ form.player_id(id='player_id', class_='form-input') }}
+            {{ form.player_id(id='player_id', class_='form-input', placeholder='123456789') }}
             {% if form.player_id.errors %}
                 <div class="form-error">{{ form.player_id.errors[0] }}</div>
             {% endif %}
-            <button type="submit" class="form-button">Sign Up</button>
 
-            <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
+            <button type="submit" class="form-button">Sign Up</button>
         </form>
+
+        <div class="auth-link">
+            Already have an account? <a href="{{ url_for('login') }}">Log in here</a>
+        </div>
     </div>
 </body>
 </html>
