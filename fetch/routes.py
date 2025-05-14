@@ -136,9 +136,9 @@ def matches():
     player_id = session.get('user_id', "813581637")
 
     if not player_id:
-        flash("You must be logged in to view your matches.", "danger")
+        flash("You must be logged in to view your match stats.", "danger")
         return redirect(url_for('login'))
-
+    
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }

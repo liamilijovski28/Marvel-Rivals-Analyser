@@ -67,7 +67,20 @@ body.settings-page::before{
     z-index:0;              
 }
 
+body.heroes-page {
+    margin: 0;
+    background: url("/static/styles/images/marvel_rivals_heros_image.png") center/cover fixed;
+    font-family: 'Segoe UI', sans-serif;
+}
 
+body.heroes-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: rgba(0, 0, 0, .30);
+    backdrop-filter: blur(4px);
+}
 
 
 
@@ -502,6 +515,146 @@ input:focus, button:focus {
 
 
 /* Content Section for heroes page*/
+.heroes-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1650px;
+    margin: 4rem auto 6rem;
+}
+
+.expander {
+    display: block;
+    margin: 0 auto 2rem;
+    background: #1a1a1a;
+    color: #fff;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    padding: .6rem 1.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.expander:hover {
+    background: #353535;
+}
+
+.role-block {
+    background: #111;
+    border-radius: 8px;
+    padding: 2rem 2rem 2rem;
+    margin-bottom: 4rem;
+}
+.role-heading {
+    margin: 0 0 1.8rem;
+    color: #fff;
+    font: 700 2.4rem/1 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2rem 0.8rem;
+    padding: 0 1.2rem;
+    justify-content: center;
+}
+
+.hero-card,
+.stats-hero-tile {
+    grid-column: span 1;
+}
+
+.hero-card,
+.stats-hero-tile {
+    width: 250px;
+    aspect-ratio: 137 / 249;
+    clip-path: polygon(0 3%, 100% 0, 100% 97%, 0 100%);
+    overflow: hidden;
+}
+
+.hero-card {
+    position: relative;
+    width: 250px;
+    aspect-ratio: 137 / 249;
+    clip-path: polygon(0 3%, 100% 0, 100% 97%, 0 100%);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .15s;
+}
+
+.hero-card:hover {
+    transform: translateY(-3px);
+}
+
+.hero-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.hero-card.open {
+    outline: none;
+}
+
+.stats-hero-tile {
+    display: none;
+    background: #2a2a2a;
+    color: #eee;
+}
+
+.hero-card.open + .stats-hero-tile {
+    display: block;
+}
+
+.stats-hero-inner {
+    height: 100%;
+    padding: 1.4rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.stats-hero-inner h3 {
+    margin: 0.6rem 0 0.6rem;
+    font: 700 1.1rem 'Segoe UI', sans-serif;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stats-hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.stats-hero-row {
+    display: flex;
+    justify-content: space-between;
+    background: #1a1a1a;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.stats-hero-row span:first-child {
+    color: #ccc;
+    font-weight: 500;
+}
+.stats-hero-row span:last-child {
+    text-align: right;
+    font-weight: 700;
+    color: #fff;
+}
+
+
+/* Content Section for compare page*/
+
 
 
 

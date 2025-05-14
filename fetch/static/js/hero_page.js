@@ -1,25 +1,19 @@
-function toggleStats(heroItem) {
-    const stats = heroItem.querySelector('.hero-stats');
-    heroItem.classList.toggle('open');
-    stats.classList.toggle('show');
+function toggleStats(card) {
+    const statsTile = card.nextElementSibling;
+    card.classList.toggle('open');
+    statsTile.classList.toggle('show');
 }
 
-let allExpanded = false; 
+function toggleExpandAll(button) {
+    const openAll = button.dataset.state !== 'open';
 
-function toggleExpandAll() {
-    const heroes = document.querySelectorAll('.hero-item');
-    heroes.forEach(hero => {
-        if (allExpanded) {
-            hero.classList.remove('open');
-            hero.querySelector('.hero-stats').classList.remove('show');
-        } else {
-            hero.classList.add('open');
-            hero.querySelector('.hero-stats').classList.add('show');
-        }
+    const allCards = document.querySelectorAll('.hero-card');
+    allCards.forEach(card => {
+        const statsTile = card.nextElementSibling; 
+        card.classList.toggle('open', openAll);
+        statsTile.classList.toggle('show', openAll);
     });
-    
-    allExpanded = !allExpanded;
 
-    const button = document.getElementById('expand-button');
-    button.textContent = allExpanded ? "Collapse All" : "Expand All";
+    button.textContent = openAll ? 'Collapse All' : 'Expand All';
+    button.dataset.state = openAll ? 'open' : 'closed';
 }

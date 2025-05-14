@@ -4,89 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heroes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Pineapple.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
-<body>
+<body class="heroes-page">         {# own body class: no more blurred headings #}
     {% set current_path = request.path %}
-
     {% include "Components/navbar.html" %}
-    
-    <main class="content-area">
-        <div class="expand-controls">
-            <button id="expand-button" onclick="toggleExpandAll()">Expand All</button>
-        </div>        
-        
-        <section id="heroes-list">
-        
-            <h2 class = "class-title">Vanguard</h2>
+
+    <main class="heroes-wrapper">
+        <button id="toggle-all" class="expander" data-state="closed" onclick="toggleExpandAll(this)">
+            Expand All
+        </button>
+
+        {% for role in ["vanguard", "duelist", "strategist"] %}
+
+        <section class="role-block {{ role }}">
+            <h2 class="role-heading">{{ role|capitalize }}</h2>
+
             <div class="hero-grid">
 
-            {% for hero_name in heroes %}
-            {% if hero_name in all_heroes["vanguard"] %}
-                <div class="hero-item" onclick="toggleStats(this)">
-                    <div class = "hero-name">{{ hero_name }}</div>
-                    <div class="hero-stats">
-                        <p>Wins: {{ heroes[hero_name]["wins"] }}</p>
-                        <p>Losses: {{ heroes[hero_name]["losses"]  }}</p>
-                        <p>Win Rate: {{ heroes[hero_name]["win_rate"] }}</p>
-                        <p>K/D: {{ heroes[hero_name]["kd"] }}</p>
-                        <p>Total Healing: {{ heroes[hero_name]["healing"] }}</p>
-                        <p>Total Damage: {{ heroes[hero_name]["damage"] }}</p>
-                        <p>Total Damage Blocked: {{ heroes[hero_name]["damage_blocked"] }}</p>
+            {% for hero_name in all_heroes[role] %}
+                {% set s = heroes.get(hero_name.title(), {}) %}
+                
+                <div class="hero-card" onclick="toggleStats(this)">
+                    <img src="{{ url_for('static',
+                                         filename='styles/images/herostatsicons/' ~
+                                         hero_name|replace(' ', '_')|replace('-', '_')
+                                         ~ '_Tile.webp') }}"
+                         alt="{{ hero_name }}" loading="lazy">
+                </div>
+
+                <!-- stats tile (hidden until the neighbour .hero-card has .open) -->
+                <div class="stats-hero-tile">
+                    <div class="stats-hero-inner">
+                        <h3>{{ hero_name }}</h3>
+                        <div class="stats-hero-grid">
+                            {% for label, val in [
+                                    ('Matches', s.matches|round(2)),
+                                    ('Wins',    s.wins|round(2)),
+                                    ('Losses',  s.losses|round(2)),
+                                    ('Win %',   s.win_rate|round(2)),
+                                    ('K/D',     s.kd|round(2)),
+                                    ('Kills',   s.kills|round(2)),
+                                    ('Deaths',  s.deaths|round(2)),
+                                    ('Damage',  s.damage|round(2)),
+                                    ('Healing', s.healing|round(2)),
+                                    ('Blocked', s.damage_blocked|round(2)),
+                                    ('Assists', s.assists|round(2)) ] %}
+                                <div class="stats-hero-row">
+                                    <span>{{ label }}</span><span>{{ val }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-            {% endif  %}
             {% endfor %}
             </div>
-
-
-            <h2 class = "class-title">Strategist</h2>
-            <div class="hero-grid">
-            {% for hero_name in heroes %}
-            {% if hero_name in all_heroes["strategist"] %}
-                <div class="hero-item" onclick="toggleStats(this)">
-                    <div class = "hero-name">{{ hero_name }}</div>
-                    <div class="hero-stats">
-                        <p>Wins: {{ heroes[hero_name]["wins"] }}</p>
-                        <p>Losses: {{ heroes[hero_name]["losses"]  }}</p>
-                        <p>Win Rate: {{ heroes[hero_name]["win_rate"] }}</p>
-                        <p>K/D: {{ heroes[hero_name]["kd"] }}</p>
-                        <p>Total Healing: {{ heroes[hero_name]["healing"] }}</p>
-                        <p>Total Damage: {{ heroes[hero_name]["damage"] }}</p>
-                        <p>Total Damage Blocked: {{ heroes[hero_name]["damage_blocked"] }}</p>
-                    </div>
-                </div>
-            {% endif %}
-            {% endfor %}
-            </div>
-                 
-
-            <h2 class = "class-title">Duelist</h2>
-            <div class="hero-grid">
-            
-            {% for hero_name in heroes %}
-            {% if hero_name in all_heroes["duelist"] %}
-                <div class="hero-item" onclick="toggleStats(this)">
-                    <div class = "hero-name">{{ hero_name }}</div>
-                    <div class="hero-stats">
-                        <p>test</p>
-                        <p>Wins: {{ heroes[hero_name]["wins"] }}</p>
-                        <p>Losses: {{ heroes[hero_name]["losses"]  }}</p>
-                        <p>Win Rate: {{ heroes[hero_name]["win_rate"] }}</p>
-                        <p>K/D: {{ heroes[hero_name]["kd"] }}</p>
-                        <p>Total Healing: {{ heroes[hero_name]["healing"] }}</p>
-                        <p>Total Damage: {{ heroes[hero_name]["damage"] }}</p>
-                        <p>Total Damage Blocked: {{ heroes[hero_name]["damage_blocked"] }}</p>
-                    </div>
-                </div>
-            {% endif %}
-            {% endfor %} 
-            </div>
-
         </section>
+        {% endfor %}
     </main>
-
     <script src="{{ url_for('static', filename='js/hero_page.js') }}"></script>
-
 </body>
 </html>

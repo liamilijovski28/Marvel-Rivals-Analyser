@@ -501,11 +501,9 @@ input:focus, button:focus {
   align-items: center;
 }
 
-
 .hero-item.open {
   height: auto;
 }
-
 
 .hero-item:hover {
   transform: scale(1.03);
