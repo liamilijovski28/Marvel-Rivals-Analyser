@@ -4,7 +4,7 @@
         <a class="{{ 'active' if request.path == '/friends' }}" href="{{ url_for('friends') }}">Friends</a>
         <a class="{{ 'active' if request.path == '/heroes'  }}" href="{{ url_for('heroes')  }}">Heroes</a>
         <a class="{{ 'active' if request.path == '/matches' }}" href="{{ url_for('matches') }}">Matches</a>
-        <a class="{{ 'active' if request.path == '/compare' }}" href="{{ url_for('compare') }}">Compare</a>
+        <a class="{{ 'active' if 'compare' in request.full_path }}" href="{{ url_for('compare') }}">Compare</a>
         <a class="{{ 'active' if request.path == '/settings' }}" href="{{ url_for('settings') }}">Settings</a>
     </nav>
 

@@ -19,7 +19,7 @@
       <div class="friend-block">
         <div class="friend-name">Sp1dermain</div>
         <div class="friend-actions">
-          <a class="friend-button compare" href="compare.html?friend=Sp1dermain">Compare</a>
+          <a class="friend-button compare" href="{{ url_for('compare') }}?friend=Sp1dermain">Compare</a>
           <div class="dropdown">
             <button class="dropdown-toggle">...</button>
             <div class="dropdown-menu">
@@ -33,7 +33,7 @@
       <div class="friend-block">
         <div class="friend-name">scOOP</div>
         <div class="friend-actions">
-          <a class="friend-button compare" href="compare.html?friend=scOOP">Compare</a>
+          <a class="friend-button compare" href="{{ url_for('compare') }}?friend=scOOP">Compare</a>
           <div class="dropdown">
             <button class="dropdown-toggle">...</button>
             <div class="dropdown-menu">
@@ -47,7 +47,7 @@
       <div class="friend-block">
         <div class="friend-name">Krunk</div>
         <div class="friend-actions">
-          <a class="friend-button compare" href="compare.html?friend=Krunk">Compare</a>
+          <a class="friend-button compare" href="{{ url_for('compare') }}?friend=Krunk">Compare</a>
           <div class="dropdown">
             <button class="dropdown-toggle">...</button>
             <div class="dropdown-menu">
@@ -61,7 +61,7 @@
       <div class="friend-block">
         <div class="friend-name">ferret88</div>
         <div class="friend-actions">
-          <a class="friend-button compare" href="compare.html?friend=ferret88">Compare</a>
+          <a class="friend-button compare" href="{{ url_for('compare') }}?friend=ferret88">Compare</a>
           <div class="dropdown">
             <button class="dropdown-toggle">...</button>
             <div class="dropdown-menu">
@@ -75,7 +75,7 @@
     </section>
   </main>
 
-  <script src="Friends.js"></script>
+  <script src="{{ url_for('static', filename='js/friends.js') }}"></script>
 
 </body>
 </html>
