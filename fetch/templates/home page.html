@@ -4,72 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marvel Rivals Analyser</title>
-    <link rel="stylesheet" href = "{{ url_for('static',filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
 </head>
 <body>
-    {% set current_path = request.path %}
+{% set current_path = request.path %}
 
-    <header class="navbar">
-        <nav class="navbar">
-            <ul>
-              <li>
-                <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
-              </li>
-              <li>
-                <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
-              </li>
-              <li>
-                <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
-              </li>
-              <li>
-                <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
-              </li>
-              <li>
-                <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
-              </li>
-              <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
-            </ul>
-          </nav>
-    </header>
+<header class="navbar">
+    <nav class="nav-links">
+        <a class="{{ 'active' if request.path in ['/', '/home'] else '' }}" href="{{ url_for('home') }}">Home</a>
+        <a class="{{ 'active' if request.path == '/friends' }}" href="{{ url_for('friends') }}">Friends</a>
+        <a class="{{ 'active' if request.path == '/heroes'  }}" href="{{ url_for('heroes')  }}">Heroes</a>
+        <a class="{{ 'active' if request.path == '/matches' }}" href="{{ url_for('matches') }}">Matches</a>
+        <a class="{{ 'active' if request.path == '/compare' }}" href="{{ url_for('compare') }}">Compare</a>
+        <a class="{{ 'active' if request.path == '/settings' }}" href="{{ url_for('settings') }}">Settings</a>
+    </nav>
 
-    <div class="content">
-        <h1>Welcome to Marvel Rivals Analyser</h1>
-        <div class="stats-container" id="user-stats">
-            <div class = "stat-card">
-                <div class = "stat-title">Wins</div>
-                <div class = "stat-value">{{ player["wins"] }}</div>
-                
-            </div>
+    <form class="nav-search" action="#" method="get">
+        <input type="text" name="q" placeholder="Search players..." aria-label="Search players">
+        <button type="submit">
+            <img src="{{ url_for('static', filename='styles/images/search-icon.png') }}" alt="">
+        </button>
+    </form>
+</header>
+<div class="navbar-fade"></div>
 
-            <div class = "stat-card">
-                <div class = "stat-title">Losses</div>
-                <div class = "stat-value">{{ player["losses"] }} </div>
-                
-            </div>
+<div class="content">
+    <h1>Welcome to Marvel Rivals Analyser</h1>
 
-            <div class = "stat-card">
-                <div class = "stat-title">Matches Played</div>
-                <div class = "stat-value">{{ player["matches"] }}</div>
-                
-            </div>
+    <div class="stats-container" id="user-stats">
+        <div class="stat-card">
+            <div class="stat-title">Wins</div>
+            <div class="stat-value">{{ player["wins"] }}</div>
+        </div>
 
-            <div class = "stat-card">
-                <div class = "stat-title">Win Rate</div>
-                <div class = "stat-value">{{ player["win_rate"] }}</div>
-                
-            </div>
+        <div class="stat-card">
+            <div class="stat-title">Losses</div>
+            <div class="stat-value">{{ player["losses"] }}</div>
+        </div>
 
-            <div class = "stat-card">
-                <div class = "stat-title">K/D</div>
-                <div class = "stat-value">{{ player["kd"] }}</div>
-                
-            </div>
+        <div class="stat-card">
+            <div class="stat-title">Matches Played</div>
+            <div class="stat-value">{{ player["matches"] }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">Win Rate</div>
+            <div class="stat-value">{{ player["win_rate"] }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">K/D</div>
+            <div class="stat-value">{{ player["kd"] }}</div>
         </div>
     </div>
-
-    
-
-                
+</div>
 
 </body>
 </html>
