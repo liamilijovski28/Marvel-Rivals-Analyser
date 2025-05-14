@@ -6,41 +6,41 @@
     <title>Marvel Rivals Analyser</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
-<body>
-{% set current_path = request.path %}
+<body class="homepage-page">
+    {% set current_path = request.path %}
 
-{% include "Components/navbar.html" %}
+    {% include "Components/navbar.html" %}
 
-<div class="content">
-    <h1>Welcome to Marvel Rivals Analyser</h1>
+    <div class="homepage-container">
+        <h1>Welcome to Marvel Rivals Analyser</h1>
 
-    <div class="stats-container" id="user-stats">
-        <div class="stat-card">
-            <div class="stat-title">Wins</div>
-            <div class="stat-value">{{ player["wins"] }}</div>
-        </div>
+        <div class="stats-container" id="user-stats">
+            <div class="stat-card">
+                <div class="stat-title">Wins</div>
+                <div class="stat-value">{{ player["wins"] }}</div>
+            </div>
 
-        <div class="stat-card">
-            <div class="stat-title">Losses</div>
-            <div class="stat-value">{{ player["losses"] }}</div>
-        </div>
+            <div class="stat-card">
+                <div class="stat-title">Losses</div>
+                <div class="stat-value">{{ player["losses"] }}</div>
+            </div>
 
-        <div class="stat-card">
-            <div class="stat-title">Matches Played</div>
-            <div class="stat-value">{{ player["matches"] }}</div>
-        </div>
+            <div class="stat-card">
+                <div class="stat-title">Matches Played</div>
+                <div class="stat-value">{{ player["matches"] }}</div>
+            </div>
 
-        <div class="stat-card">
-            <div class="stat-title">Win Rate</div>
-            <div class="stat-value">{{ player["win_rate"] }}</div>
-        </div>
+            <div class="stat-card">
+                <div class="stat-title">Win Rate</div>
+                <div class="stat-value">{{ player["win_rate"] }}</div>
+            </div>
 
-        <div class="stat-card">
-            <div class="stat-title">K/D</div>
-            <div class="stat-value">{{ player["kd"] }}</div>
+            <div class="stat-card">
+                <div class="stat-title">K/D</div>
+                <div class="stat-value">{{ player["kd"] }}</div>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
 </html>

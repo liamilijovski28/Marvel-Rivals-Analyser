@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/signup-login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
-<body class="auth-page">
-    <div class="auth-container">
+<body class="signuplogin-page">
+    <div class="signuplogin-container">
         <h1>Login</h1>
         <p>Welcome back! Enter your account details to log in.</p>
         
@@ -32,7 +32,7 @@
 
             <button type="submit" class="form-button">Login</button>
             <br>
-        <div class="auth-link">
+        <div class="signuplogin-link">
             <p>New to the platform? <a href="{{ url_for('signup') }}">Signup here</a>.</p>
         </div>
     </div>

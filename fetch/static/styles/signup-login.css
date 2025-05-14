@@ -1,4 +1,4 @@
-body.auth-page {
+body.signuplogin-page {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -12,7 +12,7 @@ body.auth-page {
     overflow: hidden;
 }
 
-body.auth-page::before {
+body.signuplogin-page::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -21,7 +21,7 @@ body.auth-page::before {
     z-index: 0;
 }
 
-.auth-container {
+.signuplogin-container {
     position: relative;
     z-index: 1;
     background-color: #121212;
@@ -34,13 +34,13 @@ body.auth-page::before {
     text-align: center;
 }
 
-.auth-container h1 {
+.signuplogin-container h1 {
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 20px;
 }
 
-.auth-container label {
+.signuplogin-container label {
     display: block;
     text-align: left;
     font-weight: 600;
@@ -48,9 +48,9 @@ body.auth-page::before {
     color: #bdbdbd;
 }
 
-.auth-container input[type="text"],
-.auth-container input[type="email"],
-.auth-container input[type="password"] {
+.signuplogin-container input[type="text"],
+.signuplogin-container input[type="email"],
+.signuplogin-container input[type="password"] {
     width: 100%;
     padding: 12px;
     margin-bottom: 16px;
@@ -61,11 +61,11 @@ body.auth-page::before {
     box-sizing: border-box;
 }
 
-.auth-container input::placeholder {
+.signuplogin-container input::placeholder {
     color: #888;
 }
 
-.auth-container button {
+.signuplogin-container button {
     width: 100%;
     padding: 12px;
     background-color: #00bcd4;
@@ -78,23 +78,23 @@ body.auth-page::before {
     margin-top: 10px;
 }
 
-.auth-container button:hover {
+.signuplogin-container button:hover {
     background-color: #0097a7;
 }
 
-.auth-link {
+.signuplogin-link {
     margin-top: 20px;
     font-size: 16px;
     color: #aaa;
 }
 
-.auth-link a {
+.signuplogin-link a {
     color: #00bcd4;
     text-decoration: none;
     font-weight: bold;
 }
 
-.auth-link a:hover {
+.signuplogin-link a:hover {
     text-decoration: underline;
 }
 

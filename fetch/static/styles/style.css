@@ -1,7 +1,31 @@
-/* styles.css */
+/* styles.css for Marvel Rivals Analyser */
 
 /* Global Styles */
-body {
+
+body.signuplogin-page {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    background: url("/static/styles/images/signup-login-background.jpg") center center no-repeat fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+body.signuplogin-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(4px) brightness(0.4);
+    -webkit-backdrop-filter: blur(4px) brightness(0.4);
+    z-index: 0;
+}
+
+body.homepage-page {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -9,7 +33,7 @@ body {
     background-size: cover;
 }
 
-body::before {
+body.homepage-page::before {
     content: '';
     position: fixed;
     top: 0; left: 0;
@@ -19,7 +43,7 @@ body::before {
     z-index: 1;
 }
 
-/* Navbar same as before */
+/* Navbar */
 input:-webkit-autofill {
     box-shadow: 0 0 0 30px #1e1e1e inset !important;
     -webkit-text-fill-color: #e0e0e0 !important;
@@ -121,8 +145,112 @@ input:focus, button:focus {
 }
 
 
-/* Content Section */
-.content {
+/* Content Section for login and signup pages*/
+.signuplogin-container {
+    position: relative;
+    z-index: 1;
+    background-color: #121212;
+    padding: 35px 30px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+    color: #f1f1f1;
+    text-align: center;
+}
+
+.signuplogin-container h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.signuplogin-container label {
+    display: block;
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #bdbdbd;
+}
+
+.signuplogin-container input[type="text"],
+.signuplogin-container input[type="email"],
+.signuplogin-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #2c2c2c;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.signuplogin-container input::placeholder {
+    color: #888;
+}
+
+.signuplogin-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00bcd4;
+    color: white;
+    border: none;
+    font-weight: 600;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.signuplogin-container button:hover {
+    background-color: #0097a7;
+}
+
+.signuplogin-link {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #aaa;
+}
+
+.signuplogin-link a {
+    color: #00bcd4;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signuplogin-link a:hover {
+    text-decoration: underline;
+}
+
+.flash-message {
+    background-color: rgba(255, 77, 77, 0.15);
+    color: #ff4d4d;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px 16px;
+    margin: 20px 0;
+    font-size: 15px;
+    border-radius: 6px;
+    z-index: 2;
+    position: relative;
+    list-style: none;
+    animation: flash-red-then-white 1s ease forwards;
+}
+
+@keyframes flash-red-then-white {
+    0%   { color: #ff4d4d; }   /* red */
+    50%  { color: #ff0000; }   /* brighter red */
+    100% { color: #ffffff; }   /* fade to white */
+}
+
+.flash-message.error {
+    animation: flash-red-then-white 1s ease forwards;
+}
+
+
+/* Content Section for home page*/
+.homepage-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -136,14 +264,13 @@ input:focus, button:focus {
     z-index: 2;
 }
 
-.content h1 {
+.homepage-container h1 {
     font-size: 3em;
     margin-bottom: 20px;
     color: #ffffff;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
 }
 
-/* Stats Container */
 .stats-container {
     display: flex;
     flex-wrap: wrap;
@@ -151,7 +278,6 @@ input:focus, button:focus {
     gap: 20px;
 }
 
-/* Stat Card */
 .stat-card {
     background-color: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -182,3 +308,6 @@ input:focus, button:focus {
     font-weight: bold;
     color: #f9c851;
 }
+
+/* Content Section for heroes page*/
+
