@@ -7,28 +7,8 @@
 </head>
 <body>
   {% set current_path = request.path %}
-  <header class="navbar">
-    <nav class="navbar">
-      <ul>
-        <li>
-          <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
-        </li>
-        <li>
-          <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
-        </li>
-        <li>
-          <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
-        </li>
-        <li>
-          <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
-        </li>
-        <li>
-          <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
-        </li>
-        <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
-      </ul>
-    </nav>
-  </header>
+  
+  {% include "Components/navbar.html" %}
 
   <section class="banner-container">
     <img src="{{ url_for('static', filename='styles/images/banner.png') }}" alt="Marvel Rivals Banner" class="banner-img" />

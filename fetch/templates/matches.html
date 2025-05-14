@@ -11,25 +11,8 @@
 <body>
   {% set current_path = request.path %}
 
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <li>
-      <a class="{% if current_path == '/' or current_path == '/home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
-    </li>
-    <li>
-      <a class="{% if current_path == '/friends' %}active{% endif %}" href="{{ url_for('friends') }}">Friends</a>
-    </li>
-    <li>
-      <a class="{% if current_path == '/heroes' %}active{% endif %}" href="{{ url_for('heroes') }}">Heroes</a>
-    </li>
-    <li>
-      <a class="{% if current_path == '/matches' %}active{% endif %}" href="{{ url_for('matches') }}">Matches</a>
-    </li>
-    <li>
-      <a class="{% if current_path == '/compare' %}active{% endif %}" href="{{ url_for('compare') }}">Compare</a>
-    </li>
-    <li><a class="{% if current_path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a></li>
-
+  {% include "Components/navbar.html" %}
+  
   <!-- Profile Banner + Summary -->
   <section class="profile-section">
     <section id="profile-header">

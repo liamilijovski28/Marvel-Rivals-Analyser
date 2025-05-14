@@ -4,29 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marvel Rivals Analyser</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <body>
 {% set current_path = request.path %}
 
-<header class="navbar">
-    <nav class="nav-links">
-        <a class="{{ 'active' if request.path in ['/', '/home'] else '' }}" href="{{ url_for('home') }}">Home</a>
-        <a class="{{ 'active' if request.path == '/friends' }}" href="{{ url_for('friends') }}">Friends</a>
-        <a class="{{ 'active' if request.path == '/heroes'  }}" href="{{ url_for('heroes')  }}">Heroes</a>
-        <a class="{{ 'active' if request.path == '/matches' }}" href="{{ url_for('matches') }}">Matches</a>
-        <a class="{{ 'active' if request.path == '/compare' }}" href="{{ url_for('compare') }}">Compare</a>
-        <a class="{{ 'active' if request.path == '/settings' }}" href="{{ url_for('settings') }}">Settings</a>
-    </nav>
-
-    <form class="nav-search" action="#" method="get">
-        <input type="text" name="q" placeholder="Search players..." aria-label="Search players">
-        <button type="submit">
-            <img src="{{ url_for('static', filename='styles/images/search-icon.png') }}" alt="">
-        </button>
-    </form>
-</header>
-<div class="navbar-fade"></div>
+{% include "Components/navbar.html" %}
 
 <div class="content">
     <h1>Welcome to Marvel Rivals Analyser</h1>
