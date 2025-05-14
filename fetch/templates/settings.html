@@ -6,57 +6,60 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <title>Settings</title>
 </head>
-<body>
+<body class="settings-page">
   {% set current_path = request.path %}
- 
-  {% include "Components/navbar.html" %}
 
-  <div>
-    <h1>Settings</h1>
-    <form>
-      <!-- Change Username -->
+  {% include "components/navbar.html" %}
+
+  <div class="settings-container">
+    <h1>Account Settings</h1>
+
+    <!-- POST so changes persist; change route when route is made and good -->
+    <form method="POST" onsubmit="showDisabledAlert(event)">
+
+      <!--Change Username-->
       <div>
         <label for="new-username">New Username</label>
-        <input type="text" id="new-username" name="new-username">
-      </div>
-      <!-- Change Password -->
-      <div>
-        <label for="new-password">New Password</label>
-        <input type="text" id="new-password" name="new-password">
-      </div>
-<!-- Change Password -->
-      <div>
-        <label for="new-playerID">New Player ID</label>
-        <input type="text" id="new-playerID" name="new-playerID">
-      </div>
-      <!-- Submit Changes -->
-      <div style="margin-bottom: 5%;">
-        <button type="submit">Save Changes</button>
-      </div>
-      <div>
-        <button type="submit">Select Player Icon</button>
+        <input type="text" id="new-username" name="new-username" placeholder="Enter new username">
       </div>
 
-      <!-- Data Sharing Settings -->
+      <!--Change Password-->
       <div>
-        <label for="data-sharing">Share my data with others:</label>
+        <label for="new-password">New Password</label>
+        <input type="password" id="new-password" name="new-password" placeholder="Enter new password">
+      </div>
+
+      <!--Change Player ID-->
+      <div>
+        <label for="new-playerID">New Player ID</label>
+        <input type="text" id="new-playerID" name="new-playerID" placeholder="Enter new Marvel Rivals player ID">
+      </div>
+
+      <!--Data-sharing toggle-->
+      <div>
+        <label for="data-sharing">Share my data with friends</label>
         <select id="data-sharing" name="data-sharing">
-          <option value="yes">Yes</option>
+          <option value="yes" selected>Yes</option>
           <option value="no">No</option>
         </select>
       </div>
 
-      <!-- Restrict Specific Friends (Visible only if data-sharing is Yes) -->
+      <!--Restrict specific friends (hidden until Yes)-->
       <div id="restricted-friends-container">
-        <label for="restricted-friends">Restricted Friends:</label>
+        <label for="restricted-friends">Restricted Friends</label>
         <input type="text" id="restricted-friends" name="restricted-friends" placeholder="Enter friend names separated by commas">
       </div>
-
-      <!-- Close Account -->
-      <div>
-        <button type="button">Close Account</button>
+  
+      <div class="settings-button-group">
+        <button type="submit">Save Changes</button>
+        <button type="button" onclick="showCloseAlert()">
+          Close Account
+        </button>
       </div>
     </form>
   </div>
+  
+  <!-- script to toggle Restricted Friends field visibility -->
+  <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 </body>
 </html>
