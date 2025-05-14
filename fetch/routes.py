@@ -17,39 +17,51 @@ def home():
     }
 
     update_url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}/update"
-
     update_response = requests.get(update_url, headers=headers)
 
-
     url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    response = requests.get(url, headers=headers).json()
 
-    response = ( requests.get(url, headers=headers) ).json()
+    if "error" in response:
+        flash(response["error"], "danger")
+        return render_template('home page.html', title='Home', player={})
 
-    kill_total = response['overall_stats']['unranked']['total_kills'] + response['overall_stats']['ranked']['total_kills']
-    death_total = response['overall_stats']['unranked']['total_deaths'] + response['overall_stats']['ranked']['total_deaths']
-  
+    overall_stats = response.get("overall_stats", {})
+    ranked = overall_stats.get("ranked", {})
+    unranked = overall_stats.get("unranked", {})
 
-    player = {"matches" : response['overall_stats']['total_matches'], "wins" : response['overall_stats']['total_wins'], 
-    "losses" : (response['overall_stats']['total_matches'] - response['overall_stats']['total_wins']), 
-    "kd" : round( (kill_total / death_total), 2), 
-    "win_rate" : round( (( response['overall_stats']['total_wins'] / response['overall_stats']['total_matches'] ) * 100), 2) }
+    kill_total = unranked.get("total_kills", 0) + ranked.get("total_kills", 0)
+    death_total = unranked.get("total_deaths", 0) + ranked.get("total_deaths", 0)
+    matches = overall_stats.get("total_matches", 0)
+    wins = overall_stats.get("total_wins", 0)
 
-    players_stats = Stats(player_id=player_id, wins=player['wins'], losses=player['losses'], matches_played=player['matches'], win_rate=player['win_rate'], Kd=player['kd'])
-    #update the database with the new stats
+    player = {
+        "matches": matches,
+        "wins": wins,
+        "losses": matches - wins,
+        "kd": round(kill_total / death_total, 2) if death_total > 0 else kill_total,
+        "win_rate": round((wins / matches) * 100, 2) if matches > 0 else 0
+    }
+
+    players_stats = Stats(player_id=player_id, wins=player['wins'], losses=player['losses'],
+                          matches_played=player['matches'], win_rate=player['win_rate'], Kd=player['kd'])
+
     existing_stats = Stats.query.filter_by(player_id=player_id).first()
     if existing_stats:
         existing_stats.Kd = round(
             (existing_stats.Kd * existing_stats.matches_played + player['kd'] * player['matches']) /
             (existing_stats.matches_played + player['matches']), 2)
-        existing_stats.wins += player['wins'] 
+        existing_stats.wins += player['wins']
         existing_stats.losses += player['losses']
         existing_stats.matches_played += player['matches']
         existing_stats.win_rate = round(existing_stats.wins / existing_stats.matches_played * 100, 2)
         db.session.add(existing_stats)
     else:
-        db.session.add(players_stats) 
-    db.session.commit()  
-    return render_template('home page.html', title = 'Home', player = player)
+        db.session.add(players_stats)
+
+    db.session.commit()
+    return render_template('home page.html', title='Home', player=player)
+
 
 @app.route('/heroes')
 def heroes():
@@ -80,17 +92,23 @@ def heroes():
             return round((kills / deaths), 2)
 
 
+    def get_hero_data(response, rank_type):
+        key = "heroes_" + rank_type
+        if key not in response:
+            return {}
 
-    def get_hero_data(response, rank_type):#rank type is either "ranked" or "unranked"
         heroes = {}
-        index = 0
-        items = len(response["heroes_" + rank_type]) 
-        while index < (items):#loops through hero data returned from the request, storing all stats in a dict nested in a dict
-            current_hero = response["heroes_" + rank_type][index]
-            heroes[current_hero['hero_name'].title()] = {"assists":current_hero["assists"], "damage":current_hero["damage"], 
-            "damage_blocked":current_hero["damage_taken"], "deaths": current_hero["deaths"], "healing":current_hero["heal"], 
-            "kills":current_hero["kills"], "matches":current_hero["matches"], "wins":current_hero["wins"]}
-            index = index + 1
+        for current_hero in response[key]:
+            heroes[current_hero['hero_name'].title()] = {
+                "assists": current_hero.get("assists", 0),
+                "damage": current_hero.get("damage", 0),
+                "damage_blocked": current_hero.get("damage_taken", 0),
+                "deaths": current_hero.get("deaths", 0),
+                "healing": current_hero.get("heal", 0),
+                "kills": current_hero.get("kills", 0),
+                "matches": current_hero.get("matches", 0),
+                "wins": current_hero.get("wins", 0)
+            }
         return heroes
     
     def fill_null_heroes(hero_data, all_heroes, hero_class):#adds all heroes that there is no data for in a set of hero data (automatically 0 in all stats)
@@ -138,7 +156,7 @@ def matches():
     if not player_id:
         flash("You must be logged in to view your match stats.", "danger")
         return redirect(url_for('login'))
-    
+
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
@@ -149,15 +167,19 @@ def matches():
     print("== Player Profile Response ==")
     print(response)
 
+    if "error" in response:
+        flash(response["error"], "danger")
+        return render_template("matches.html", username=player_id, display_name="Unavailable", stats={})
 
     display_name = response.get("name", "Unknown")
-    ranked = response['overall_stats']['ranked']
-    unranked = response['overall_stats']['unranked']
+    overall_stats = response.get("overall_stats", {})
+    ranked = overall_stats.get("ranked", {})
+    unranked = overall_stats.get("unranked", {})
 
-    kills = ranked['total_kills'] + unranked['total_kills']
-    deaths = ranked['total_deaths'] + unranked['total_deaths']
-    matches_played = response['overall_stats']['total_matches']
-    wins = response['overall_stats']['total_wins']
+    kills = ranked.get('total_kills', 0) + unranked.get('total_kills', 0)
+    deaths = ranked.get('total_deaths', 0) + unranked.get('total_deaths', 0)
+    matches_played = overall_stats.get('total_matches', 0)
+    wins = overall_stats.get('total_wins', 0)
 
     stats = {
         "kd": round(kills / deaths, 2) if deaths > 0 else kills,
@@ -166,7 +188,6 @@ def matches():
         "losses": matches_played - wins,
         "win_rate": round((wins / matches_played) * 100, 2) if matches_played > 0 else 0
     }
-
 
     return render_template("matches.html", username=player_id, display_name=display_name, stats=stats)
 
