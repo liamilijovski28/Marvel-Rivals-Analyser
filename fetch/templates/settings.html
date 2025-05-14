@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Settings</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
 </head>
 <body>
   {% set current_path = request.path %}
- 
   <header class="navbar">
     <nav>
       <ul>
@@ -22,52 +21,51 @@
     </nav>
   </header>
 
-  <div>
+  <div class="auth-container">
     <h1>Settings</h1>
-    <form>
-      <!-- Change Username -->
-      <div>
-        <label for="new-username">New Username</label>
-        <input type="text" id="new-username" name="new-username">
-      </div>
-      <!-- Change Password -->
-      <div>
-        <label for="new-password">New Password</label>
-        <input type="text" id="new-password" name="new-password">
-      </div>
-<!-- Change Password -->
-      <div>
-        <label for="new-playerID">New Player ID</label>
-        <input type="text" id="new-playerID" name="new-playerID">
-      </div>
-      <!-- Submit Changes -->
-      <div style="margin-bottom: 5%;">
-        <button type="submit">Save Changes</button>
-      </div>
-      <div>
-        <button type="submit">Select Player Icon</button>
-      </div>
 
-      <!-- Data Sharing Settings -->
-      <div>
-        <label for="data-sharing">Share my data with others:</label>
-        <select id="data-sharing" name="data-sharing">
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-      <!-- Restrict Specific Friends (Visible only if data-sharing is Yes) -->
-      <div id="restricted-friends-container">
-        <label for="restricted-friends">Restricted Friends:</label>
-        <input type="text" id="restricted-friends" name="restricted-friends" placeholder="Enter friend names separated by commas">
-      </div>
+    <!-- Unified Form Start -->
+    <form method="POST" action="{{ url_for('settings') }}">
+      {{ form.hidden_tag() }}
 
-      <!-- Close Account -->
-      <div>
-        <button type="button">Close Account</button>
-      </div>
+      <h2>Update Account Info</h2>
+      <label for="new_username">New Username</label>
+      {{ form.new_username(id="new_username", class_="form-input") }}
+
+      <label for="new_password">New Password</label>
+      {{ form.new_password(id="new_password", class_="form-input") }}
+
+      <label for="confirm_password">Confirm Password</label>
+      {{ form.confirm_password(id="confirm_password", class_="form-input") }}
+
+      <label for="new_player_id">New Player ID</label>
+      {{ form.new_player_id(id="new_player_id", class_="form-input") }}
+
+      <button type="submit" name="update_settings" class="form-button">Update Settings</button>
+
+      <hr>
+
+      <h2>Friend Sharing</h2>
+      <label for="allow_friend_sharing">{{ form.allow_friend_sharing.label }}</label>
+      {{ form.allow_friend_sharing(id="allow_friend_sharing", class_="form-checkbox") }}
+
+      <button type="submit" name="save_friends" class="form-button">Save Sharing Preferences</button>
+
+      <hr>
+
+      <h2>Account Management</h2>
+      <button type="submit" name="logout" class="form-button">Logout</button>
+      <button type="submit" name="close_account" class="form-button">Close Account</button>
     </form>
+    <!-- Unified Form End -->
   </div>
 </body>
 </html>

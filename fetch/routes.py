@@ -1,14 +1,10 @@
-from flask import render_template
-from fetch import app
+from fetch import app, db
 import requests
-from flask import jsonify
-from fetch.forms import LoginForm, SignupForm
-from flask import render_template, redirect, url_for, flash
+from fetch.forms import LoginForm, SignupForm, SettingsForm
+from flask import render_template, redirect, url_for, flash, request, jsonify, session
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
-from fetch.models import Stats, User  # Import your User model
-from fetch import db
-from flask import session
-
+from fetch.models import Stats, User, Friends  # Import your User model
+from flask_login import login_user, logout_user, current_user, login_required
 @app.route('/home')
 def home():
     player_id = session.get('user_id', "813581637")  # Default to a test player ID if not logged in
@@ -191,25 +187,73 @@ def friends():
 @app.route("/compare")
 def compare():
     return render_template("compare.html")
-
-@app.route("/settings")
+@app.route('/debug')
+def debug():
+    if current_user.is_authenticated:
+        return f"Logged in as {current_user.username} (Player ID: {current_user.player_id})"
+    else:
+        return "Not logged in"
+@app.route("/settings", methods=["GET", "POST"])
+#@login_required
 def settings():
-    return render_template("settings.html")
+    form = SettingsForm()
+
+    if request.method == 'POST':
+        # Logout
+        if 'logout' in request.form:
+            logout_user()
+            flash('Logged out successfully', 'success')
+            return redirect(url_for('login'))
+
+        # Close account
+        elif form.close_account.data:
+            user = User.query.get(current_user.id)
+            Friends.query.filter_by(player_id=user.player_id).delete()
+            Stats.query.filter_by(player_id=user.player_id).delete()
+            db.session.delete(user)
+            db.session.commit()
+            logout_user()
+            flash('Account closed successfully', 'success')
+            return redirect(url_for('signup'))
+
+        # Update settings
+        elif form.update_settings.data and form.validate_on_submit():
+            if User.query.filter(User.player_id == form.new_player_id.data, User.id != current_user.id).first():
+                flash('Player ID is already taken.', 'error')
+            else:
+                current_user.username = form.new_username.data
+                current_user.password = generate_password_hash(form.new_password.data)
+                current_user.player_id = form.new_player_id.data
+                db.session.commit()
+                flash('Settings updated successfully!', 'success')
+                return redirect(url_for('settings'))
+
+        # Update friend sharing
+        elif form.save_friends.data:
+            friends = Friends.query.filter_by(player_id=current_user.player_id).first()
+            if not friends:
+                friends = Friends(player_id=current_user.player_id, friend_ids=[], allow_sharing=form.allow_friend_sharing.data)
+                db.session.add(friends)
+            else:
+                friends.allow_sharing = form.allow_friend_sharing.data
+            db.session.commit()
+            flash('Friend sharing settings updated.', 'success')
+            return redirect(url_for('settings'))
+
+    return render_template('settings.html', form=form)
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        from fetch.models import User  # Import your User model
-
         # Check if the username exists in the database
         username = form.username.data
         password = form.password.data
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             # If the username exists and the password is correct
-            session['user_id'] = user.player_id  # Store the player ID in the session
+            login_user(user)
             return redirect(url_for('home'))
         else:
             # If the username doesn't exist or the password is incorrect
@@ -254,7 +298,7 @@ def signup():
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", "danger")
             return redirect(url_for('signup'))
-        session['user_id'] = player_id
+        login_user(new_user)
         return redirect(url_for('home'))
     
     return render_template("signup.html", form=form)
