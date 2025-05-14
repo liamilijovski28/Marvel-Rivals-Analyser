@@ -5,12 +5,13 @@ from flask import jsonify
 from fetch.forms import LoginForm, SignupForm
 from flask import render_template, redirect, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
-
-
+from fetch.models import Stats, User  # Import your User model
+from fetch import db
+from flask import session
 
 @app.route('/home')
 def home():
-    player_id = "813581637"
+    player_id = session.get('user_id', "813581637")  # Default to a test player ID if not logged in
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
@@ -32,8 +33,22 @@ def home():
     "losses" : (response['overall_stats']['total_matches'] - response['overall_stats']['total_wins']), 
     "kd" : round( (kill_total / death_total), 2), 
     "win_rate" : round( (( response['overall_stats']['total_wins'] / response['overall_stats']['total_matches'] ) * 100), 2) }
-    
-    
+
+    players_stats = Stats(player_id=player_id, wins=player['wins'], losses=player['losses'], matches_played=player['matches'], win_rate=player['win_rate'], Kd=player['kd'])
+    #update the database with the new stats
+    existing_stats = Stats.query.filter_by(player_id=player_id).first()
+    if existing_stats:
+        existing_stats.Kd = round(
+            (existing_stats.Kd * existing_stats.matches_played + player['kd'] * player['matches']) /
+            (existing_stats.matches_played + player['matches']), 2)
+        existing_stats.wins += player['wins'] 
+        existing_stats.losses += player['losses']
+        existing_stats.matches_played += player['matches']
+        existing_stats.win_rate = round(existing_stats.wins / existing_stats.matches_played * 100, 2)
+        db.session.add(existing_stats)
+    else:
+        db.session.add(players_stats) 
+    db.session.commit()  
     return render_template('home page.html', title = 'Home', player = player)
 
 @app.route('/heroes')
@@ -194,6 +209,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             # If the username exists and the password is correct
+            session['user_id'] = user.player_id  # Store the player ID in the session
             return redirect(url_for('home'))
         else:
             # If the username doesn't exist or the password is incorrect
@@ -206,8 +222,6 @@ def login():
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        from fetch.models import User  # Import your User model
-        from fetch import db  # Import your database instance
 
         username = form.username.data
         password = form.password.data
@@ -236,12 +250,11 @@ def signup():
         try:
             db.session.add(new_user)
             db.session.commit()
-            print("it worked")
         except Exception as e:
             db.session.rollback()
             flash(f"An error occurred: {str(e)}", "danger")
             return redirect(url_for('signup'))
-        
+        session['user_id'] = player_id
         return redirect(url_for('home'))
     
     return render_template("signup.html", form=form)
