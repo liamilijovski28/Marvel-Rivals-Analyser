@@ -49,14 +49,23 @@
         <label for="restricted-friends">Restricted Friends</label>
         <input type="text" id="restricted-friends" name="restricted-friends" placeholder="Enter friend names separated by commas">
       </div>
-  
+      
       <div class="settings-button-group">
         <button type="submit">Save Changes</button>
-        <button type="button" onclick="showCloseAlert()">
-          Close Account
-        </button>
+        <button type="button" onclick="logoutRedirect()">Logout</button>
+        <button type="button" onclick="confirmCloseAccount()">Close Account</button>
       </div>
     </form>
+    
+    <div id="close-account-overlay" class="close-account-overlay">
+      <div class="close-account-content">
+        <p>Are you sure you want to permanently close your account?</p>
+        <div class="close-account-buttons">
+          <button type="button" class="close-account-cancel" onclick="closeAccountCancel()">Cancel</button>
+          <button type="button" class="close-account-confirm" onclick="closeAccountConfirm()">Close Account</button>
+        </div>
+      </div>
+    </div>
   </div>
   
   <!-- script to toggle Restricted Friends field visibility -->

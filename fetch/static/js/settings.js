@@ -21,3 +21,20 @@ function showDisabledAlert(event) {
 function showCloseAlert() {
     alert("Closing your account is currently disabled. This feature is not available yet.");
 }
+
+function confirmCloseAccount() {
+  document.getElementById("close-account-overlay").style.display = "flex";
+}
+
+function closeAccountCancel() {
+  document.getElementById("close-account-overlay").style.display = "none";
+}
+
+function closeAccountConfirm() {
+  closeAccountCancel();
+  alert("Account closure feature is not yet implemented.");
+}
+
+function logoutRedirect() {
+  window.location.href = "/login";
+}
