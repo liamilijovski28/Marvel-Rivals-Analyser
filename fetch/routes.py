@@ -53,7 +53,12 @@ def home():
 
 @app.route('/heroes')
 def heroes():
-    player_id = "813581637"
+    player_id = session.get('user_id', "813581637")
+
+    if not player_id:
+        flash("You must be logged in to view your hero stats.", "danger")
+        return redirect(url_for('login'))
+
 
     url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
     headers = {
@@ -128,7 +133,12 @@ def heroes():
 
 @app.route('/matches')
 def matches():
-    player_id = "813581637"
+    player_id = session.get('user_id', "813581637")
+
+    if not player_id:
+        flash("You must be logged in to view your matches.", "danger")
+        return redirect(url_for('login'))
+
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
