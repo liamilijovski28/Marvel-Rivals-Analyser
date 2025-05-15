@@ -64,7 +64,7 @@ def home():
 @app.route('/heroes')
 @login_required
 def heroes():
-    player_id = session.get('user_id', "813581637")
+    player_id = current_user.get_id()
 
     if not player_id:
         flash("You must be logged in to view your hero stats.", "danger")
@@ -151,7 +151,7 @@ def heroes():
 @app.route('/matches')
 @login_required
 def matches():
-    player_id = session.get('user_id', "813581637")
+    player_id = current_user.get_id()
 
     if not player_id:
         flash("You must be logged in to view your match stats.", "danger")
