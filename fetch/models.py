@@ -7,6 +7,7 @@ class User(UserMixin,db.Model):
     player_id = db.Column(db.String(12), primary_key=True, unique=True, nullable=False)
     stats = db.relationship('Stats', back_populates='user', uselist=False, cascade="all, delete-orphan")
     restricted_friends = db.relationship('RestrictedFriends', back_populates='user', uselist=False, cascade="all, delete-orphan")
+    icon = db.Column(db.String(200))
 
     def get_id(self):
         return self.player_id

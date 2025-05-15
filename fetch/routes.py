@@ -23,6 +23,9 @@ def home():
     if "error" in response:
         flash(response["error"], "danger")
         return render_template('home page.html', title='Home', player={})
+    
+
+   
 
     overall_stats = response.get("overall_stats", {})
     ranked = overall_stats.get("ranked", {})
@@ -144,9 +147,12 @@ def heroes():
         "win_rate":calc_wr((rHero["matches"] + uHero["matches"]), (rHero["wins"] + uHero["wins"])), 
         "kd":calc_kd((rHero["kills"] + uHero["kills"]), (rHero["deaths"] + uHero["deaths"]))}
 
- 
+    iconid = response["player"]["icon"]["player_icon_id"]
 
     return render_template('Heroes.html', title = 'Heroes', heroes = hero_agg, all_heroes = all_heroes)
+    #return redirect (f"https://marvelrivalsapi.com/premium/nameplates/{iconid}_banner.webp")
+
+
 
 @app.route('/matches')
 @login_required

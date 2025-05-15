@@ -6,11 +6,10 @@
     <title>Heroes</title>
     <link rel="stylesheet"
           href="{{ url_for('static', filename='styles/style.css') }}">
-</head>
+</head></img>
 <body class="heroes-page">         {# own body class: no more blurred headings #}
     {% set current_path = request.path %}
     {% include "Components/navbar.html" %}
-
     <main class="heroes-wrapper">
         <button id="toggle-all" class="expander" data-state="closed" onclick="toggleExpandAll(this)">
             Expand All
