@@ -14,60 +14,45 @@
   <div class="settings-container">
     <h1>Account Settings</h1>
 
-    <!-- POST so changes persist; change route when route is made and good -->
-    <form method="POST" onsubmit="showDisabledAlert(event)">
+    <form method="POST">
+  {{ form.hidden_tag() }}
 
-      <!--Change Username-->
-      <div>
-        <label for="new-username">New Username</label>
-        <input type="text" id="new-username" name="new-username" placeholder="Enter new username">
-      </div>
-
-      <!--Change Password-->
-      <div>
-        <label for="new-password">New Password</label>
-        <input type="password" id="new-password" name="new-password" placeholder="Enter new password">
-      </div>
-
-      <!--Change Player ID-->
-      <div>
-        <label for="new-playerID">New Player ID</label>
-        <input type="text" id="new-playerID" name="new-playerID" placeholder="Enter new Marvel Rivals player ID">
-      </div>
-
-      <!--Data-sharing toggle-->
-      <div>
-        <label for="data-sharing">Share my data with friends</label>
-        <select id="data-sharing" name="data-sharing">
-          <option value="yes" selected>Yes</option>
-          <option value="no">No</option>
-        </select>
-      </div>
-
-      <!--Restrict specific friends (hidden until Yes)-->
-      <div id="restricted-friends-container">
-        <label for="restricted-friends">Restricted Friends</label>
-        <input type="text" id="restricted-friends" name="restricted-friends" placeholder="Enter friend names separated by commas">
-      </div>
-      
-      <div class="settings-button-group">
-        <button type="submit">Save Changes</button>
-        <button type="button" onclick="logoutRedirect()">Logout</button>
-        <button type="button" onclick="confirmCloseAccount()">Close Account</button>
-      </div>
-    </form>
-    
-    <div id="close-account-overlay" class="close-account-overlay">
-      <div class="close-account-content">
-        <p>Are you sure you want to permanently close your account?</p>
-        <div class="close-account-buttons">
-          <button type="button" class="close-account-cancel" onclick="closeAccountCancel()">Cancel</button>
-          <button type="button" class="close-account-confirm" onclick="closeAccountConfirm()">Close Account</button>
-        </div>
-      </div>
-    </div>
+  <!-- Change Username -->
+  <div>
+    <label for="new-username">New Username</label>
+    {{ form.new_username(id="new-username", placeholder="Enter new username") }}
   </div>
-  
+
+  <!-- Change Password -->
+  <div>
+    <label for="new-password">New Password</label>
+    {{ form.new_password(id="new-password", placeholder="Enter new password") }}
+  </div>
+
+  <!-- Change Player ID -->
+  <div>
+    <label for="new-playerID">New Player ID</label>
+    {{ form.new_playerID(id="new-playerID", placeholder="Enter new Marvel Rivals player ID") }}
+  </div>
+
+  <!-- Data-sharing toggle -->
+  <div>
+    <label for="data-sharing">Share my data with friends</label>
+    {{ form.data_sharing(id="data-sharing") }}
+  </div>
+
+  <!-- Restrict specific friends -->
+  <div id="restricted-friends-container">
+    <label for="restricted-friends">Restricted Friends</label>
+    {{ form.restricted_friends(id="restricted-friends", placeholder="Enter friend names separated by commas") }}
+  </div>
+
+  <!-- Buttons -->
+  {{ form.submit(type="submit", class="form-button button") }}
+  {{ form.logout(type="submit",class="form-button danger-button") }}
+  {{ form.close_account(type="submit",class="form-button danger-button") }}
+</form>
+
   <!-- script to toggle Restricted Friends field visibility -->
   <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 </body>

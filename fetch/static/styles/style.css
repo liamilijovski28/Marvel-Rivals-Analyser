@@ -423,8 +423,8 @@ input:focus, button:focus {
 .settings-container button[type=submit]{background:#019ab0;color:#fff;}
 .settings-container button[type=submit]:hover{background:#017c90;}
 
-.settings-container button[type=button]{background:#d84040;color:#fff;margin-top:8px;}
-.settings-container button[type=button]:hover{background:#b03030;}
+.settings-container .danger-button[type=submit]{background:#d84040;color:#fff;margin-top:8px;}
+.settings-container .danger-button[type=submit]:hover{background:#b03030;}
 
 .settings-container select{
     appearance:none;
