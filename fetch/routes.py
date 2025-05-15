@@ -1,15 +1,13 @@
-from flask import render_template
-from fetch import app
+from fetch import app, db
 import requests
-from flask import jsonify
+from flask import jsonify, session, render_template, redirect, url_for, flash
 from fetch.forms import LoginForm, SignupForm
-from flask import render_template, redirect, url_for, flash
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
 from fetch.models import Stats, User  # Import your User model
-from fetch import db
-from flask import session
+from flask_login import login_required, current_user, login_user, logout_user
 
 @app.route('/home')
+@login_required
 def home():
     player_id = session.get('user_id', "813581637")  # Default to a test player ID if not logged in
     headers = {
@@ -64,6 +62,7 @@ def home():
 
 
 @app.route('/heroes')
+@login_required
 def heroes():
     player_id = session.get('user_id', "813581637")
 
@@ -150,6 +149,7 @@ def heroes():
     return render_template('Heroes.html', title = 'Heroes', heroes = hero_agg, all_heroes = all_heroes)
 
 @app.route('/matches')
+@login_required
 def matches():
     player_id = session.get('user_id', "813581637")
 
@@ -216,14 +216,17 @@ def get_heroes():
 
 
 @app.route("/friends")
+@login_required
 def friends():
     return render_template("Friends.html")
 
 @app.route("/compare")
+@login_required
 def compare():
     return render_template("compare.html")
 
 @app.route("/settings")
+@login_required
 def settings():
     return render_template("settings.html")
 
@@ -240,7 +243,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             # If the username exists and the password is correct
-            session['user_id'] = user.player_id  # Store the player ID in the session
+            login_user(user)  # Log the user in
             return redirect(url_for('home'))
         else:
             # If the username doesn't exist or the password is incorrect
