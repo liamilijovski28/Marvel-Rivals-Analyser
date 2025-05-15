@@ -6,54 +6,88 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <title>Settings</title>
 </head>
+
 <body class="settings-page">
   {% set current_path = request.path %}
-
   {% include "components/navbar.html" %}
 
   <div class="settings-container">
     <h1>Account Settings</h1>
 
-    <form method="POST">
-  {{ form.hidden_tag() }}
+    <!-- SettingsForm comes from forms.py -->
+    <form id="settings-form" method="POST">
+      {{ form.hidden_tag() }}
 
-  <!-- Change Username -->
-  <div>
-    <label for="new-username">New Username</label>
-    {{ form.new_username(id="new-username", placeholder="Enter new username") }}
+      <!-- ────── Change Username ────── -->
+      <div>
+        <label for="new-username">New Username</label>
+        {{ form.new_username(id="new-username", placeholder="Enter new username") }}
+      </div>
+
+      <!-- ────── Change Password ────── -->
+      <div>
+        <label for="new-password">New Password</label>
+        {{ form.new_password(id="new-password", placeholder="Enter new password") }}
+      </div>
+
+      <!-- ────── Change Player ID ────── -->
+      <div>
+        <label for="new-playerID">New Player ID</label>
+        {{ form.new_playerID(id="new-playerID", placeholder="Enter new Marvel Rivals player ID") }}
+      </div>
+
+      <!-- ────── Data-sharing toggle ────── -->
+      <div>
+        <label for="data-sharing">Share my data with friends</label>
+        {{ form.data_sharing(id="data-sharing") }}
+      </div>
+
+      <!-- ────── Restrict friends (hidden by JS when needed) ────── -->
+      <div id="restricted-friends-container">
+        <label for="restricted-friends">Restricted Friends</label>
+        {{ form.restricted_friends(id="restricted-friends", placeholder="Enter friend names separated by commas") }}
+      </div>
+
+      <!-- ────── Buttons wired to WTForms fields ────── -->
+      <div class="settings-button-group">
+        <!-- Save Changes -->
+        <button  type="submit" name="{{ form.submit.name }}" value="1" class="form-button">
+          {{ form.submit.label.text }}
+        </button>
+
+        <!-- Logout -->
+        <button  type="submit" name="{{ form.logout.name }}" value="1" class="danger-button">
+          {{ form.logout.label.text }}
+        </button>
+
+        <!-- Open “Close Account” overlay (JS handles confirmation) -->
+        <button  type="button" onclick="confirmCloseAccount()" class="danger-button">
+          {{ form.close_account.label.text }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Overlay that appears when the user clicks “Close Account” -->
+    <div id="close-account-overlay" class="close-account-overlay">
+      <div class="close-account-content">
+        <p>Are you sure you want to permanently close your account?</p>
+
+        <div class="close-account-buttons">
+          <!-- Cancel simply hides the overlay -->
+          <button type="button" class="danger-button close-account-cancel" onclick="closeAccountCancel()">
+            Cancel
+          </button>
+
+          <!-- Confirm submits the SAME SettingsForm -->
+          <button type="submit" form="settings-form" name="{{ form.close_account.name }}" value="1" class="danger-button close-account-confirm">
+            Close Account
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Change Password -->
-  <div>
-    <label for="new-password">New Password</label>
-    {{ form.new_password(id="new-password", placeholder="Enter new password") }}
-  </div>
-
-  <!-- Change Player ID -->
-  <div>
-    <label for="new-playerID">New Player ID</label>
-    {{ form.new_playerID(id="new-playerID", placeholder="Enter new Marvel Rivals player ID") }}
-  </div>
-
-  <!-- Data-sharing toggle -->
-  <div>
-    <label for="data-sharing">Share my data with friends</label>
-    {{ form.data_sharing(id="data-sharing") }}
-  </div>
-
-  <!-- Restrict specific friends -->
-  <div id="restricted-friends-container">
-    <label for="restricted-friends">Restricted Friends</label>
-    {{ form.restricted_friends(id="restricted-friends", placeholder="Enter friend names separated by commas") }}
-  </div>
-
-  <!-- Buttons -->
-  {{ form.submit(type="submit", class="form-button button") }}
-  {{ form.logout(type="submit",class="form-button danger-button") }}
-  {{ form.close_account(type="submit",class="form-button danger-button") }}
-</form>
-
-  <!-- script to toggle Restricted Friends field visibility -->
   <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+  
 </body>
 </html>
