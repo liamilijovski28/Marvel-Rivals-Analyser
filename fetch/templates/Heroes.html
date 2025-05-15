@@ -4,42 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heroes</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
-<body class="heroes-page">         {# own body class: no more blurred headings #}
+<body class="heroes-page">
     {% set current_path = request.path %}
     {% include "Components/navbar.html" %}
 
-    <main class="heroes-wrapper">
+    <!-- Controls: Season + Mode + Expand -->
+    <div class="hero-controls-bar">
+        <form id="heroFilterForm" method="get" class="hero-filter-form">
+            <label for="season">Season:</label>
+            <select name="season" id="season" onchange="document.getElementById('heroFilterForm').submit();">
+                <option value="">All Seasons</option>
+                <option value="2" {{ 'selected' if request.args.get('season') == '2' else '' }}>S2: Hellfire Gala</option>
+                <option value="1.5" {{ 'selected' if request.args.get('season') == '1.5' else '' }}>S1.5: Eternal Night Falls</option>
+                <option value="1" {{ 'selected' if request.args.get('season') == '1' else '' }}>S1: Eternal Night Falls</option>
+                <option value="0" {{ 'selected' if request.args.get('season') == '0' else '' }}>S0: Doom’s Rise</option>
+            </select>
+
+            <label for="mode">Mode:</label>
+            <select name="mode" id="mode" onchange="document.getElementById('heroFilterForm').submit();">
+                <option value="all" {{ 'selected' if request.args.get('mode') == 'all' else '' }}>All Modes</option>
+                <option value="ranked" {{ 'selected' if request.args.get('mode') == 'ranked' else '' }}>Ranked</option>
+                <option value="unranked" {{ 'selected' if request.args.get('mode') == 'unranked' else '' }}>Unranked</option>
+            </select>
+        </form>
+
         <button id="toggle-all" class="expander" data-state="closed" onclick="toggleExpandAll(this)">
             Expand All
         </button>
+    </div>
 
+    <!-- Hero Stats Section -->
+    <main class="heroes-wrapper">
         {% for role in ["vanguard", "duelist", "strategist"] %}
-
         <section class="role-block {{ role }}">
             <h2 class="role-heading">{{ role|capitalize }}</h2>
 
             <div class="hero-grid">
+                {% for hero_name in all_heroes[role] %}
+                    {% set s = heroes.get(hero_name.title(), {}) %}
+                    <div class="hero-card" onclick="toggleStats(this)">
+                        <img src="{{ url_for('static', filename='styles/images/hero-stats-tiles/' ~ hero_name|replace(' ', '_')|replace('-', '_') ~ '_Tile.webp') }}"
+                             alt="{{ hero_name }}" loading="lazy">
+                    </div>
 
-            {% for hero_name in all_heroes[role] %}
-                {% set s = heroes.get(hero_name.title(), {}) %}
-                
-                <div class="hero-card" onclick="toggleStats(this)">
-                    <img src="{{ url_for('static',
-                                         filename='styles/images/hero-stats-tiles/' ~
-                                         hero_name|replace(' ', '_')|replace('-', '_')
-                                         ~ '_Tile.webp') }}"
-                         alt="{{ hero_name }}" loading="lazy">
-                </div>
-
-                <!-- stats tile (hidden until the neighbour .hero-card has .open) -->
-                <div class="stats-hero-tile">
-                    <div class="stats-hero-inner">
-                        <h3>{{ hero_name }}</h3>
-                        <div class="stats-hero-grid">
-                            {% for label, val in [
+                    <!-- Stats Panel -->
+                    <div class="stats-hero-tile">
+                        <div class="stats-hero-inner">
+                            <h3>{{ hero_name }}</h3>
+                            <div class="stats-hero-grid">
+                                {% for label, val in [
                                     ('Matches', s.matches|round(2)),
                                     ('Wins',    s.wins|round(2)),
                                     ('Losses',  s.losses|round(2)),
@@ -50,19 +65,22 @@
                                     ('Damage',  s.damage|round(2)),
                                     ('Healing', s.healing|round(2)),
                                     ('Blocked', s.damage_blocked|round(2)),
-                                    ('Assists', s.assists|round(2)) ] %}
-                                <div class="stats-hero-row">
-                                    <span>{{ label }}</span><span>{{ val }}</span>
-                                </div>
-                            {% endfor %}
+                                    ('Assists', s.assists|round(2))
+                                ] %}
+                                    <div class="stats-hero-row">
+                                        <span>{{ label }}</span><span>{{ val }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
             </div>
         </section>
         {% endfor %}
     </main>
+
     <script src="{{ url_for('static', filename='js/hero_page.js') }}"></script>
+    
 </body>
 </html>

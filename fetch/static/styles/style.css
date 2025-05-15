@@ -536,24 +536,6 @@ input:focus, button:focus {
     margin: 1rem auto 2rem;
 }
 
-.expander {
-    display: block;
-    margin: 0 auto 2rem;
-    background: #1a1a1a;
-    color: #fff;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background .2s;
-}
-
-.expander:hover {
-    background: #353535;
-}
-
 .role-block {
     background: #111;
     border-radius: 8px;
@@ -667,12 +649,79 @@ input:focus, button:focus {
     color: #fff;
 }
 
+.hero-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin: 2rem auto;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-controls-bar .hero-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.hero-filter-form label {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hero-filter-form select {
+    height: 44px;
+    min-width: 140px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 6px;
+    background: #1a1a1a;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 15px;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23ffffff" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    box-sizing: border-box;
+    transition: background 0.2s;
+}
+
+.hero-filter-form select:hover {
+    background-color: #2c2c2c;
+    cursor: pointer;
+}
+
+.hero-controls-bar .expander {
+    height: 44px;
+    min-width: 140px;
+    padding: 0 18px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.hero-controls-bar .expander:hover {
+    background: #353535;
+}
+
+
+
 
 /* Content Section for compare page*/
-
-
-
-
-
-
 

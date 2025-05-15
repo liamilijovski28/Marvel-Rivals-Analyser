@@ -64,89 +64,120 @@ def home():
 @app.route('/heroes')
 @login_required
 def heroes():
+    from flask import request
+
     player_id = current_user.get_id()
+    selected_season = request.args.get("season", "")
+    mode = request.args.get("mode", "all").lower()
 
     if not player_id:
         flash("You must be logged in to view your hero stats.", "danger")
         return redirect(url_for('login'))
 
-
-    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
 
-    response = ( requests.get(url, headers=headers) ).json()
+    base_url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+
+    # Support both single and all-season logic
+    season_list = ["0", "1", "1.5", "2"] if selected_season == "" else [selected_season]
+    api_responses = []
+
+    for season in season_list:
+        url = f"{base_url}?season={season}"
+        try:
+            res = requests.get(url, headers=headers).json()
+            api_responses.append(res)
+        except Exception as e:
+            print(f"Failed to fetch season {season}: {e}")
 
     def calc_wr(matches, wins):
-        if matches == 0:
-            return 0
-        else:
-            return round(((wins / matches)*100), 2)
-        
-    def calc_kd(kills, deaths):
-        if deaths == 0:
-            return kills #technically undefined, but this an approachable simplification for the user
-        else:
-            return round((kills / deaths), 2)
+        return round((wins / matches) * 100, 2) if matches > 0 else 0
 
+    def calc_kd(kills, deaths):
+        return round(kills / deaths, 2) if deaths > 0 else kills
 
     def get_hero_data(response, rank_type):
-        key = "heroes_" + rank_type
+        key = f"heroes_{rank_type}"
         if key not in response:
             return {}
-
-        heroes = {}
-        for current_hero in response[key]:
-            heroes[current_hero['hero_name'].title()] = {
-                "assists": current_hero.get("assists", 0),
-                "damage": current_hero.get("damage", 0),
-                "damage_blocked": current_hero.get("damage_taken", 0),
-                "deaths": current_hero.get("deaths", 0),
-                "healing": current_hero.get("heal", 0),
-                "kills": current_hero.get("kills", 0),
-                "matches": current_hero.get("matches", 0),
-                "wins": current_hero.get("wins", 0)
+        return {
+            h['hero_name'].title(): {
+                "assists": h.get("assists", 0),
+                "damage": h.get("damage", 0),
+                "damage_blocked": h.get("damage_taken", 0),
+                "deaths": h.get("deaths", 0),
+                "healing": h.get("heal", 0),
+                "kills": h.get("kills", 0),
+                "matches": h.get("matches", 0),
+                "wins": h.get("wins", 0)
             }
-        return heroes
-    
-    def fill_null_heroes(hero_data, all_heroes, hero_class):#adds all heroes that there is no data for in a set of hero data (automatically 0 in all stats)
-        for foo in all_heroes[hero_class]:
-            if (foo in hero_data) == False:
-                hero_data[foo.title()] = {"assists":0,"damage":0,"damage_blocked":0,"deaths":0,"healing":0,
-                "kills":0,"matches":0,"wins":0}
+            for h in response[key]
+        }
+
+    def merge_hero_dicts(hero_lists):
+        merged = {}
+        for heroes in hero_lists:
+            for name, data in heroes.items():
+                if name not in merged:
+                    merged[name] = data.copy()
+                else:
+                    for stat in data:
+                        merged[name][stat] += data[stat]
+        return merged
+
+    def fill_null_heroes(hero_data, all_heroes, hero_class):
+        for name in all_heroes[hero_class]:
+            if name.title() not in hero_data:
+                hero_data[name.title()] = {k: 0 for k in [
+                    "assists", "damage", "damage_blocked", "deaths", "healing",
+                    "kills", "matches", "wins"
+                ]}
         return hero_data
 
-    ranked_heroes = get_hero_data(response, "ranked")
-    unranked_heroes = get_hero_data(response, "unranked")
+    all_heroes = {
+        "vanguard": ["Captain America", "Doctor Strange", "Emma Frost", "Groot", "Hulk", "Magneto", "Peni Parker", "The Thing", "Thor", "Venom"],
+        "strategist": ["Adam Warlock", "Cloak & Dagger", "Invisible Woman", "Jeff the Land Shark", "Loki", "Luna Snow", "Mantis", "Rocket Raccoon"],
+        "duelist": ["Black Panther", "Black Widow", "Hawkeye", "Hela", "Human Torch", "Iron Fist", "Iron Man", "Magik", "Mister Fantastic", "Moon Knight", "Namor", "Psylocke", "Scarlet Witch", "Spider-man", "Squirrel Girl", "Star-Lord", "Storm", "The Punisher", "Winter Soldier", "Wolverine"]
+    }
 
-    all_heroes = {"vanguard": ["Captain America", "Doctor Strange", "Emma Frost", "Groot", "Hulk", "Magneto", "Peni Parker", 
-    "The Thing", "Thor", "Venom"], "strategist" : ["Adam Warlock", 
-    "Cloak & Dagger", "Invisible Woman", "Jeff the Land Shark", "Loki", "Luna Snow", 
-    "Mantis", "Rocket Raccoon"], "duelist" : ["Black Panther", "Black Widow", "Hawkeye", "Hela", "Human Torch", 
-    "Iron Fist", "Iron Man", "Magik",
-    "Mister Fantastic", "Moon Knight", "Namor", "Psylocke", "Scarlet Witch", "Spider-man", "Squirrel Girl", "Star-Lord",
-    "Storm", "The Punisher", "Winter Soldier", "Wolverine"]}
+    # Build ranked/unranked/all hero dicts across all seasons
+    ranked_hero_lists = [get_hero_data(res, "ranked") for res in api_responses]
+    unranked_hero_lists = [get_hero_data(res, "unranked") for res in api_responses]
 
-    for h_class in ["vanguard", "strategist", "duelist"]:
-        ranked_heroes = fill_null_heroes(ranked_heroes.copy(), all_heroes, h_class)
-        unranked_heroes = fill_null_heroes(unranked_heroes.copy(), all_heroes, h_class)
+    ranked = merge_hero_dicts(ranked_hero_lists)
+    unranked = merge_hero_dicts(unranked_hero_lists)
 
-    hero_agg = {} #aggregate hero data
-    for hero in ranked_heroes:
-        rHero = ranked_heroes[hero]
-        uHero = unranked_heroes[hero]
-        hero_agg[hero] = { "assists":round((rHero["assists"] + uHero["assists"]),2), 
-        "damage_blocked":round((rHero["damage_blocked"] + uHero["damage_blocked"]),2), "damage":round((rHero["damage"] + uHero["damage"]),2),   
-        "deaths":(rHero["deaths"] + uHero["deaths"]), "kills":(rHero["kills"] + uHero["kills"]), 
-        "healing":round((rHero["healing"] + uHero["healing"]),2), "matches":(rHero["matches"] + uHero["matches"]),
-        "wins":(rHero["wins"] + uHero["wins"]), "losses":((rHero["matches"] + uHero["matches"]) - (rHero["wins"] + uHero["wins"])),
-        "win_rate":calc_wr((rHero["matches"] + uHero["matches"]), (rHero["wins"] + uHero["wins"])), 
-        "kd":calc_kd((rHero["kills"] + uHero["kills"]), (rHero["deaths"] + uHero["deaths"]))}
+    for group in all_heroes:
+        ranked = fill_null_heroes(ranked, all_heroes, group)
+        unranked = fill_null_heroes(unranked, all_heroes, group)
 
- 
+    # Combine selected mode
+    hero_agg = {}
+    for hero in ranked:
+        r = ranked[hero]
+        u = unranked[hero]
+        combine = lambda stat: (r[stat] + u[stat]) if mode == "all" else (r[stat] if mode == "ranked" else u[stat])
+        matches = combine("matches")
+        wins = combine("wins")
+        deaths = combine("deaths")
+        kills = combine("kills")
+        hero_agg[hero] = {
+            "assists": round(combine("assists"), 2),
+            "damage": round(combine("damage"), 2),
+            "damage_blocked": round(combine("damage_blocked"), 2),
+            "deaths": deaths,
+            "healing": round(combine("healing"), 2),
+            "kills": kills,
+            "matches": matches,
+            "wins": wins,
+            "losses": matches - wins,
+            "win_rate": calc_wr(matches, wins),
+            "kd": calc_kd(kills, deaths)
+        }
 
-    return render_template('Heroes.html', title = 'Heroes', heroes = hero_agg, all_heroes = all_heroes)
+    return render_template('Heroes.html', title='Heroes', heroes=hero_agg, all_heroes=all_heroes)
 
 @app.route('/matches')
 @login_required
