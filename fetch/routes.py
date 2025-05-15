@@ -1,15 +1,13 @@
-from flask import render_template
-from fetch import app
+from fetch import app, db
 import requests
-from flask import jsonify
-from fetch.forms import LoginForm, SignupForm
-from flask import render_template, redirect, url_for, flash
+from flask import jsonify, session, render_template, redirect, url_for, flash
+from fetch.forms import LoginForm, SignupForm, SettingsForm
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
-from fetch.models import Stats, User  # Import your User model
-from fetch import db
-from flask import session
+from fetch.models import RestrictedFriends, Stats, User  # Import your User model
+from flask_login import login_required, current_user, login_user, logout_user
 
 @app.route('/home')
+@login_required
 def home():
     player_id = session.get('user_id', "813581637")  # Default to a test player ID if not logged in
     headers = {
@@ -64,6 +62,7 @@ def home():
 
 
 @app.route('/heroes')
+@login_required
 def heroes():
     player_id = session.get('user_id', "813581637")
 
@@ -150,6 +149,7 @@ def heroes():
     return render_template('Heroes.html', title = 'Heroes', heroes = hero_agg, all_heroes = all_heroes)
 
 @app.route('/matches')
+@login_required
 def matches():
     player_id = session.get('user_id', "813581637")
 
@@ -216,31 +216,81 @@ def get_heroes():
 
 
 @app.route("/friends")
+@login_required
 def friends():
     return render_template("Friends.html")
 
 @app.route("/compare")
+@login_required
 def compare():
     return render_template("compare.html")
 
-@app.route("/settings")
+@app.route("/settings", methods=["GET", "POST"])
+@login_required
 def settings():
-    return render_template("settings.html")
+    form = SettingsForm()
+    if form.validate_on_submit():
+        if form.submit.data:
+               
+            new_username = form.new_username.data
+            new_password = form.new_password.data
+            new_playerID = form.new_playerID.data.strip()
+            data_sharing = form.data_sharing.data == 'yes'
+            restricted_friends = form.restricted_friends.data
+
+            user = current_user
+            if new_username:
+                user.username = new_username
+            if new_password:
+                user.password = generate_password_hash(new_password)
+            if new_playerID:
+                user.player_id = new_playerID
+
+            rf = RestrictedFriends.query.filter_by(player_id=user.player_id).first()
+            if not rf:
+                rf = RestrictedFriends(player_id=user.player_id)
+                db.session.add(rf)
+
+            rf.data_sharing = data_sharing
+            rf.restricted_friends = restricted_friends
+
+            db.session.commit()
+            #updating the login details
+            logout_user()
+            updated_user = user
+            if new_playerID:
+                updated_user = User.query.filter_by(player_id=new_playerID).first()
+            login_user(updated_user)
+
+        #if logout of close account was pressed
+        if form.logout.data:
+            logout_user()
+            flash("You have been logged out.", "success")
+            return redirect(url_for('login'))
+        if form.close_account.data:
+            user = current_user
+            db.session.delete(user)
+            db.session.commit()
+            flash("Your account has been closed.", "success")
+            return redirect(url_for('signup'))
+        if not form.logout.data and not form.close_account.data:
+            # If neither logout nor close account was pressed
+            flash("Settings updated successfully!", "success")
+        return redirect(url_for('settings'))
+    return render_template("settings.html", form=form)
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        from fetch.models import User  # Import your User model
-
         # Check if the username exists in the database
         username = form.username.data
         password = form.password.data
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             # If the username exists and the password is correct
-            session['user_id'] = user.player_id  # Store the player ID in the session
+            login_user(user)  # Log the user in
             return redirect(url_for('home'))
         else:
             # If the username doesn't exist or the password is incorrect

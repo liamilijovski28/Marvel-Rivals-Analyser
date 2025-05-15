@@ -64,6 +64,10 @@ Start and Initialise Virtual Environment:
 
   pip install -r requirements.txt
 
+  set the SECRET_KEY environment variable using:
+  LINUX: export SECRET_KEY='write-your-secret-here' 
+  WINDOWS: $env:SECRET_KEY = 'write-your-secret-here'
+
 ```
 
 # Running

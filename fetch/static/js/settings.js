@@ -34,7 +34,3 @@ function closeAccountConfirm() {
   closeAccountCancel();
   alert("Account closure feature is not yet implemented.");
 }
-
-function logoutRedirect() {
-  window.location.href = "/login";
-}
