@@ -533,7 +533,7 @@ input:focus, button:focus {
     position: relative;
     z-index: 1;
     max-width: 1650px;
-    margin: 4rem auto 6rem;
+    margin: 1rem auto 2rem;
 }
 
 .expander {
@@ -543,8 +543,9 @@ input:focus, button:focus {
     color: #fff;
     border: 1px solid #1a1a1a;
     border-radius: 8px;
-    padding: .6rem 1.6rem;
+    padding: 1rem 2rem;
     font-weight: 600;
+    font-size: 1.2rem;
     cursor: pointer;
     transition: background .2s;
 }
