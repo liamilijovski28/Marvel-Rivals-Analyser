@@ -1,5 +1,5 @@
 /* Global Styles */
-body {
+body.matches {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -111,21 +111,21 @@ input:focus, button:focus {
 
 
 /* Profile Section */
-.profile-section {
+.matches-profile-section {
   background: #111;
   padding: 1rem 0 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Profile Header */
-#profile-header {
+#matches-profile-header {
   background-color: #111;
   padding: 20px;
   color: #fff;
   text-align: center;
 }
 
-#profile-banner {
+#matches-profile-banner {
   position: relative;
   width: 100%;
   height: 240px;
@@ -134,7 +134,7 @@ input:focus, button:focus {
   background-color: #111;
 }
 
-.banner-img {
+.matches-banner-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -142,7 +142,7 @@ input:focus, button:focus {
   filter: brightness(0.85) saturate(1.2);
 }
 
-#overlay {
+#matches-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -151,7 +151,7 @@ input:focus, button:focus {
   background: rgba(0, 0, 0, 0.3);
 }
 
-#profile-info-wrapper {
+#matches-profile-info-wrapper {
   position: absolute;
   bottom: 20px;
   left: 30px;
@@ -160,7 +160,7 @@ input:focus, button:focus {
   gap: 15px;
 }
 
-#profile-picture {
+#matches-profile-picture {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -169,28 +169,28 @@ input:focus, button:focus {
   background: white;
 }
 
-#player-meta h1 {
+#matches-player-meta h1 {
   margin: 0;
   font-size: 1.8rem;
   font-weight: bold;
   color: white;
 }
 
-#player-meta p {
+#matches-player-meta p {
   font-size: 0.9rem;
   color: #ccc;
   margin: 4px 0 0;
 }
 
 /* Player Summary */
-#player-summary {
+#matches-player-summary {
   display: flex;
   justify-content: center;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 
-.summary-card {
+.matches-summary-card {
   display: flex;
   gap: 2rem;
   background: rgba(255, 255, 255, 0.05);
@@ -203,16 +203,16 @@ input:focus, button:focus {
   backdrop-filter: blur(8px);
 }
 
-.summary-stat {
+.matches-summary-stat {
   text-align: center;
 }
-.stat-label {
+.matches-stat-label {
   font-size: 0.8rem;
   color: #aaa;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.stat-value {
+.matches-stat-value {
   font-size: 1.5rem;
   font-weight: bold;
   color: white;
