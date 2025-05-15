@@ -9,7 +9,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 @app.route('/home')
 @login_required
 def home():
-    player_id = session.get('user_id', "813581637")  # Default to a test player ID if not logged in
+    player_id = current_user.get_id()  # Default to a test player ID if not logged in
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
