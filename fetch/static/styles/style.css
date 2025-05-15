@@ -179,7 +179,7 @@ input:focus, button:focus {
 }
 
 .navbar-fade {
-    position: absolute;
+    position: sticky;
     top: 72px;
     left: 0;
     width: 100%;
@@ -205,8 +205,15 @@ input:focus, button:focus {
 }
 
 .signuplogin-container h1 {
+    font-size: 36px;
+    font-weight: 750;
+    margin-bottom: 30px;
+    color: #ffd700;
+}
+
+.signuplogin-container h2 {
     font-size: 28px;
-    font-weight: 700;
+    font-weight: 625;
     margin-bottom: 20px;
 }
 
