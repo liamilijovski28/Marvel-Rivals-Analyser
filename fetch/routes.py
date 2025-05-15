@@ -164,9 +164,6 @@ def matches():
     url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
     response = requests.get(url, headers=headers).json()
 
-    print("== Player Profile Response ==")
-    print(response)
-
     if "error" in response:
         flash(response["error"], "danger")
         return render_template("matches.html", username=player_id, display_name="Unavailable", stats={})

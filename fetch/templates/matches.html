@@ -25,7 +25,6 @@
           </div>
           <div id="player-meta">
             <h1 id="playerName">{{ display_name }}</h1>
-            <p><span class="eye"></span> 882 Views</p>
           </div>
         </div>
       </div>
@@ -94,19 +93,21 @@
     const username = "{{ username }}";
 
     const heroImageMap = {
-      "adam warlock": "adamwarlock.png",
-      "black panther": "blackpanther.png",
-      "black widow": "blackwidow.png",
-      "captain america": "captainamerica.png",
-      "cloak & dagger": "cloak&dagger.png",
-      "doctor strange": "doctorstrange.png",
-      "emma frost": "emmafrost.png",
-      "groot": "groot.png",
-      "hawkeye": "hawkeye.png",
-      "hela": "hela.png",
-      "hulk": "hulk.png",
-      "magneto": "magneto.png"
+      "adam warlock": "AdamWarlock.png",
+      "black panther": "BlackPanther.png",
+      "black widow": "BlackWidow.png",
+      "captain america": "CaptainAmerica.png",
+      "cloak & dagger": "CloakandDagger.png",
+      "emma frost": "EmmaFrost.png",
+      "groot": "Groot.png",
+      "hela": "Hela.png",
+      "hulk": "Hulk.png",
+      "magneto": "Magneto.png",
+      "moon knight": "MoonKnight.png",
+      "spider-man": "SpiderMan.png",
+      "the thing": "TheThing.png"
     };
+
 
     function getHeroImagePath(heroNameRaw) {
       const heroName = heroNameRaw.trim().toLowerCase();
