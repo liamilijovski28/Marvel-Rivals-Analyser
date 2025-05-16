@@ -371,21 +371,21 @@ def signup():
     
     return render_template("signup.html", form=form)
 
-@app.route("/respond_request/<int:req_id>/<action>", methods=["POST"])
+@blueprint.route("/respond_request/<int:req_id>/<action>", methods=["POST"])
 @login_required
 def respond_request(req_id, action):
     req = FriendRequest.query.get_or_404(req_id)
 
     if req.receiver_id != current_user.username:
         flash("Unauthorized action.", "danger")
-        return redirect(url_for("friends"))
+        return redirect(url_for("main.friends"))
 
     sender = User.query.filter_by(username=req.sender_id).first()
     receiver = User.query.filter_by(username=req.receiver_id).first()
 
     if not sender or not receiver:
         flash("User not found.", "danger")
-        return redirect(url_for("friends"))
+        return redirect(url_for("main.friends"))
 
     if action == "accept":
         req.status = "accepted"
@@ -403,10 +403,10 @@ def respond_request(req_id, action):
         flash("Friend request rejected.", "info")
 
     db.session.commit()
-    return redirect(url_for("friends"))
+    return redirect(url_for("main.friends"))
 
 
-@app.route("/remove_friend/<username>", methods=["POST"])
+@blueprint.route("/remove_friend/<username>", methods=["POST"])
 @login_required
 def remove_friend(username):
     print(f"Trying to remove: {username}")
@@ -421,7 +421,7 @@ def remove_friend(username):
     
     if not friend:
         flash("Friend not found.", "danger")
-        return redirect(url_for("friends"))
+        return redirect(url_for("main.friends"))
 
     # Remove the friend both ways if they exist
     if friend in user.friends:
@@ -431,4 +431,4 @@ def remove_friend(username):
 
     db.session.commit()
     flash(f"Removed {username} from your friends list.", "success")
-    return redirect(url_for("friends"))
+    return redirect(url_for("main.friends"))

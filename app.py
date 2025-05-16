@@ -11,7 +11,6 @@ load_dotenv()
 
 app = create_app(DevelopmentConfig) 
 CORS(app)
-migrate = Migrate(app, db)
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -22,7 +21,7 @@ API_BASE = "https://marvelrivalsapi.com/api/v1"
 HEADERS = {"x-api-key": API_KEY}
 
 
-@app.route("/api/player/<username>/update")
+@blueprint.route("/api/player/<username>/update")
 def update_player(username):
     try:
         res = requests.get(f"{API_BASE}/player/{username}/update", headers=HEADERS)
@@ -32,7 +31,7 @@ def update_player(username):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/player/<username>/match-history")
+@blueprint.route("/api/player/<username>/match-history")
 def player_match_history(username):
     try:
         res = requests.get(f"{API_BASE}/player/{username}/match-history", headers=HEADERS)
@@ -42,7 +41,7 @@ def player_match_history(username):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/player/<username>/matches")
+@blueprint.route("/api/player/<username>/matches")
 def player_matches(username):
     try:
         res = requests.get(f"{API_BASE}/player/{username}/match-history", headers=HEADERS)
@@ -56,7 +55,7 @@ def player_matches(username):
         return jsonify({"error": "Unexpected error", "detail": str(e)}), 500
 
 
-@app.route("/api/player/<username>/profile")
+@blueprint.route("/api/player/<username>/profile")
 def player_profile(username):
     try:
         res = requests.get(f"{API_BASE}/player/{username}", headers=HEADERS)
@@ -66,7 +65,7 @@ def player_profile(username):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/heroes")
+@blueprint.route("/api/heroes")
 def get_heroes():
     try:
         res = requests.get(f"{API_BASE}/heroes", headers=HEADERS)
