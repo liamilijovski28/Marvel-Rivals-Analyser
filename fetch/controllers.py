@@ -16,8 +16,8 @@ def try_login(username, password):
 
 def try_signup(username, password, player_id):
 
-        if not player_id.isdigit() or len(player_id) != 9:
-            return "Player ID must be exactly 9 digits."
+        if not player_id.isdigit() or ( (len(player_id) != 9) and (len(player_id) != 10 ) ):
+            return "Player ID must be 9 or 10 digits."
 
         # Check if the username already exists
         existing_user = User.query.filter_by(username=username).first()
