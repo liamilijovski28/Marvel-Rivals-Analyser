@@ -549,3 +549,38 @@ def remove_friend(username):
     db.session.commit()
     flash(f"Removed {username} from your friends list.", "success")
     return redirect(url_for("main.friends"))
+
+@blueprint.route("/api/friend-request", methods=["POST"])
+@login_required
+def api_friend_request():
+    """
+    Handles friend-request submissions coming from the navbar (AJAX).
+    Returns JSON so the current page doesn’t redirect.
+    """
+    search_username = request.form.get("search_username", "").strip()
+    if not search_username:
+        return jsonify(error="Username required"), 400
+    if search_username.lower() == current_user.username.lower():
+        return jsonify(error="You can’t add yourself"), 400
+
+    recipient = User.query.filter_by(username=search_username).first()
+    if not recipient:
+        return jsonify(error="User not found"), 404
+
+    # Prevent duplicates or reverse requests
+    existing = FriendRequest.query.filter_by(
+        sender_id=current_user.username,
+        receiver_id=recipient.username
+    ).first()
+    reverse = FriendRequest.query.filter_by(
+        sender_id=recipient.username,
+        receiver_id=current_user.username
+    ).first()
+    if existing or reverse:
+        return jsonify(error="Friend request already exists or is pending"), 409
+
+    db.session.add(FriendRequest(sender_id=current_user.username,
+                                 receiver_id=recipient.username))
+    db.session.commit()
+
+    return jsonify(status="sent", username=search_username), 200

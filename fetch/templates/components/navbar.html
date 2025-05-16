@@ -8,11 +8,16 @@
         <a class="{{ 'active' if request.path == '/settings' }}" href="{{ url_for('main.settings') }}">Settings</a>
     </nav>
 
-    <form class="nav-search" action="#" method="get">
-        <input type="text" name="q" placeholder="Search players..." aria-label="Search players">
-        <button type="submit">
+    <form id="nav-friend-search" class="nav-search" action="#" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="search_username"
+               placeholder="Search players…" aria-label="Search players" required>
+        <button type="submit" class="friend-button send-request">
             <img src="{{ url_for('main.static', filename='styles/images/search-icon.png') }}" alt="">
         </button>
     </form>
 </header>
+
 <div class="navbar-fade"></div>
+
+<script src="{{ url_for('main.static', filename='js/nav_friend_search.js') }}" defer></script>
