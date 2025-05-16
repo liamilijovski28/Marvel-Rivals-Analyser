@@ -342,11 +342,30 @@ def friends():
 @blueprint.route("/compare")
 @login_required
 def compare():
+    from fetch.models import User  # just to be safe
     player_id = current_user.get_id()
     season = request.args.get("season")
+    friend_username = request.args.get("friend")
 
+    # Get your own stats
     user_stats = get_overall_stats(player_id, season)
-    return render_template("compare.html", user_stats=user_stats)
+
+    friend_stats = {}
+    friend_name = None
+
+    if friend_username:
+        friend_user = User.query.filter_by(username=friend_username).first()
+        if friend_user:
+            friend_name = friend_user.username
+            friend_stats = get_overall_stats(friend_user.player_id, season)
+
+    return render_template(
+        "compare.html",
+        user_stats=user_stats,
+        friend_stats=friend_stats,
+        friend_name=friend_name
+    )
+
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])

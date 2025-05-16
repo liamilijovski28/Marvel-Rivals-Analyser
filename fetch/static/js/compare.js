@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const overallStats = {
-    user: {
+  user: {
     "KDA Ratio": userStatsFromFlask.kda,
     "Kills": userStatsFromFlask.kills,
     "Deaths": userStatsFromFlask.deaths,
@@ -24,10 +24,22 @@ const overallStats = {
     "Damage Blocked": userStatsFromFlask.blocked,
     "Max Kill Streak": userStatsFromFlask.max_kill_streak,
     "MVPs": userStatsFromFlask.mvps,
-    "SVPs": userStatsFromFlask.svps},
-
-  friend: {"KDA Ratio": 2.13, "Kills": 12282, "Deaths": 14443, "Assists": 17048, "Damage": 685096, "Healing": 340489, "Damage Blocked": 227136, "Max Kill Streak": 41, "MVPs": 159, "SVPs": 20}
+    "SVPs": userStatsFromFlask.svps
+  },
+  friend: {
+    "KDA Ratio": friendStatsFromFlask.kda,
+    "Kills": friendStatsFromFlask.kills,
+    "Deaths": friendStatsFromFlask.deaths,
+    "Assists": friendStatsFromFlask.assists,
+    "Damage": friendStatsFromFlask.damage,
+    "Healing": friendStatsFromFlask.healing,
+    "Damage Blocked": friendStatsFromFlask.blocked,
+    "Max Kill Streak": friendStatsFromFlask.max_kill_streak,
+    "MVPs": friendStatsFromFlask.mvps,
+    "SVPs": friendStatsFromFlask.svps
+  }
 };
+
 console.log("Final overallStats.user:", overallStats.user);
 
 
