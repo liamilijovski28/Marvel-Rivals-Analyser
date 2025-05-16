@@ -8,6 +8,8 @@ from fetch.models import RestrictedFriends, Stats, User  # Import your User mode
 from flask_login import login_required, current_user, login_user, logout_user
 from fetch.models import User, FriendRequest
 from fetch.blueprints import blueprint
+from fetch.forms import SignupForm
+
 
 def get_role_stats(player_id, season=None):
     headers = {
@@ -486,17 +488,15 @@ def compare():
     season = request.args.get("season")
     friend_username = request.args.get("friend")
 
-    # --- Get user's overall + hero + role stats ---
+    # --- Get own stats ---
     user_stats = get_overall_stats(player_id, season)
     user_hero_totals = get_total_hero_stats(player_id, season)
     user_stats.update(user_hero_totals)
     user_hero_stats = get_simplified_hero_stats(player_id, season)
-    user_role_stats = get_role_stats(player_id, season)
 
-    # --- Friend stats placeholders ---
+    # --- Friend stats setup ---
     friend_stats = {}
     friend_hero_stats = {}
-    friend_role_stats = {}
     friend_name = None
 
     if friend_username:
@@ -507,9 +507,8 @@ def compare():
             friend_hero_totals = get_total_hero_stats(friend_user.player_id, season)
             friend_stats.update(friend_hero_totals)
             friend_hero_stats = get_simplified_hero_stats(friend_user.player_id, season)
-            friend_role_stats = get_role_stats(friend_user.player_id, season)
 
-    # --- Friend list for dropdown ---
+    # --- Gather accepted friends ---
     accepted = FriendRequest.query.filter(
         ((FriendRequest.sender_id == current_user.username) | (FriendRequest.receiver_id == current_user.username)) &
         (FriendRequest.status == 'accepted')
@@ -529,11 +528,8 @@ def compare():
         friend_name=friend_name,
         user_hero_stats=user_hero_stats,
         friend_hero_stats=friend_hero_stats,
-        user_role_stats=user_role_stats,
-        friend_role_stats=friend_role_stats,
-        friends=friends
+        friends=friends  # ✅ friend dropdown data
     )
-
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])
@@ -589,17 +585,22 @@ def login():
 @blueprint.route("/signup", methods=["GET", "POST"])
 def signup():
     form = SignupForm()
-    if form.validate_on_submit():
 
+    if request.method == "POST":
+        print("POST received")
+
+    if form.validate_on_submit():
         new_user = try_signup(form.username.data, form.password.data, form.player_id.data)
         if isinstance(new_user, User):
             login_user(new_user)
+            return redirect(url_for('main.home'))
         else:
-            flash(new_user, 'danger')
-            return redirect(url_for('main.signup'))
-        return redirect(url_for('main.home'))
-    
+            # Attach signup-specific error to the username field
+            form.username.errors.append(new_user)
+
+    # Always render the form (even with errors) so the page displays them
     return render_template("signup.html", form=form)
+
 
 @blueprint.route("/respond_request/<int:req_id>/<action>", methods=["POST"])
 @login_required

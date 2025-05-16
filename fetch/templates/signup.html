@@ -24,19 +24,19 @@
             {{ form.hidden_tag() }}
 
             <label for="username">Username:</label>
-            {{ form.username(id='username', class_='form-input', placeholder='Enter Username') }}
+            {{ form.username(id='username', class_='form-input', placeholder='Enter Username', required=False) }}
             {% if form.username.errors %}
                 <div class="form-error">{{ form.username.errors[0] }}</div>
             {% endif %}
 
             <label for="password">Password:</label>
-            {{ form.password(id='password', class_='form-input', placeholder='********') }}
+            {{ form.password(id='password', class_='form-input', placeholder='********', required=False) }}
             {% if form.password.errors %}
                 <div class="form-error">{{ form.password.errors[0] }}</div>
             {% endif %}
 
             <label for="player_id">Player ID:</label>
-            {{ form.player_id(id='player_id', class_='form-input', placeholder='123456789') }}
+            {{ form.player_id(id='player_id', class_='form-input', placeholder='123456789', required=False) }}
             {% if form.player_id.errors %}
                 <div class="form-error">{{ form.player_id.errors[0] }}</div>
             {% endif %}

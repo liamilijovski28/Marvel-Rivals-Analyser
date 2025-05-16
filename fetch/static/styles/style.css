@@ -334,6 +334,19 @@ box-shadow: none;
   animation: flash-red-then-white 1s ease forwards;
 }
 
+.form-error {
+  background-color: rgba(255, 77, 77, 0.15);
+  color: #ff4d4d;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
+  margin: 10px 0 16px;
+  font-size: 14px;
+  border-radius: 5px;
+  border-left: 4px solid #ff4d4d;
+  animation: flash-red-then-white 1s ease forwards;
+}
+
 
 /* Content Section for home page*/
 .homepage-container {
