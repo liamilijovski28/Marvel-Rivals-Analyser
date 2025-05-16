@@ -288,6 +288,11 @@ input:focus, button:focus {
     background:#204020;
     color:#aaffaa;
   }
+/* Highlight for tied stats */
+  .tie-highlight{
+    background:#c3c317;
+    color:#ffff86;
+  }
 
   /* Roster flex (heroes/roles) */
   .roster-flex{
