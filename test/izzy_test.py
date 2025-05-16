@@ -19,8 +19,8 @@ class TestSignupLogin:
         time.sleep(1)
 
         self.driver.find_element(By.ID, "username").send_keys("testuser123")
-        self.driver.find_element(By.ID, "password").send_keys("securepassword")
-        self.driver.find_element(By.ID, "player_id").send_keys("1122334455")
+        self.driver.find_element(By.ID, "password").send_keys("Secure123!")
+        self.driver.find_element(By.ID, "player_id").send_keys("112233445")  # Must be exactly 9 digits
         self.driver.find_element(By.CSS_SELECTOR, "form button[type='submit']").click()
         time.sleep(1)
 
@@ -30,13 +30,14 @@ class TestSignupLogin:
         self.driver.get("http://127.0.0.1:5000/signup")
         time.sleep(1)
 
-        self.driver.find_element(By.ID, "username").send_keys("Pineapples117")  # already exists
-        self.driver.find_element(By.ID, "password").send_keys("security")
+        self.driver.find_element(By.ID, "username").send_keys("Pineapples117")  # Already exists
+        self.driver.find_element(By.ID, "password").send_keys("Security123!")
         self.driver.find_element(By.ID, "player_id").send_keys("123456789")
         self.driver.find_element(By.CSS_SELECTOR, "form button[type='submit']").click()
         time.sleep(1)
 
-        assert "already exists" in self.driver.page_source or "danger" in self.driver.page_source
+        errors = self.driver.find_elements(By.CLASS_NAME, "form-error")
+        assert any("already exists" in e.text.lower() for e in errors)
 
     def test_signup_missing_fields(self):
         self.driver.get("http://127.0.0.1:5000/signup")
@@ -48,7 +49,9 @@ class TestSignupLogin:
         self.driver.find_element(By.CSS_SELECTOR, "form button[type='submit']").click()
         time.sleep(1)
 
-        assert "form-error" in self.driver.page_source or "This field is required" in self.driver.page_source
+        errors = self.driver.find_elements(By.CLASS_NAME, "form-error")
+        assert len(errors) >= 1
+        assert any("required" in e.text.lower() for e in errors)
 
     def test_login_redirect_from_signup(self):
         self.driver.get("http://127.0.0.1:5000/signup")
