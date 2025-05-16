@@ -393,22 +393,34 @@ def remove_friend(username):
     print(f"Trying to remove: {username}")
     user = current_user
     friend = User.query.filter_by(username=username).first()
-    
-    
+
     print(f"Current user: {user.username}")
     print(f"User's friends: {[f.username for f in user.friends]}")
     print(f"Friend to remove: {friend.username if friend else 'None'}")
-    
-    
+
     if not friend:
         flash("Friend not found.", "danger")
         return redirect(url_for("main.friends"))
 
-    # Remove the friend both ways if they exist
+    # Remove the friend both ways
     if friend in user.friends:
         user.friends.remove(friend)
     if user in friend.friends:
         friend.friends.remove(user)
+
+    # ✅ Remove the accepted FriendRequest record from the database
+    fr = FriendRequest.query.filter(
+        ((FriendRequest.sender_id == user.username) & (FriendRequest.receiver_id == friend.username)) |
+        ((FriendRequest.sender_id == friend.username) & (FriendRequest.receiver_id == user.username)),
+        FriendRequest.status == 'accepted'
+    ).first()
+
+    if fr:
+        print(f"Deleting FriendRequest with ID: {fr.id}")
+        db.session.delete(fr)
+
+    print(f"User's friends after removal: {[f.username for f in user.friends]}")
+    print(f"{friend.username}'s friends after removal: {[f.username for f in friend.friends]}")
 
     db.session.commit()
     flash(f"Removed {username} from your friends list.", "success")
