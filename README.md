@@ -1,7 +1,7 @@
 # CITS3403-Project
 Agile Web Development Project
 
-Welcome to Marvel Rivals Analyser, a program that will analyse the gameplay of users, both on a per match, and over career basis. Whilst other stats and trackers apps exist (both in-game & third-party), this project takes a deeper look at the statistics, rather than just providing general win rate information and allows you to compare your statistics to your rivals to see who the better superhero is.
+Welcome to Marvel Rivals Analyser, which will allow the user to compare their stats with friends to see who's the best superhero!
 
 | Name      | Student ID | Github Username |
 | ----------- | ----------- | ----------- |
@@ -18,7 +18,7 @@ Each game a user logs, they will submit the following statistics:
 
 -Game mode (This project will support only either Quick Match or Ranked)
 
--Current Season (Is either 0, a positive integer, or a positive integer + 0.5)/Alternatively could get user to input current date
+-Current Season (Is either 0, a positive integer, or a positive integer + 0.5)
 
 -Character (who they played), 
 
@@ -33,20 +33,6 @@ Each game a user logs, they will submit the following statistics:
 -Damage Blocked (Damage the user took)
 
 -Healing (Health restored by the user)
-
--Accuracy (Ratio of hit attacks vs misses)
-
--Win/Loss (Boolean of whether their team won or lost)
-
--MVP/SVP (MVP is the “best” on the winning team, SVP is the same but for the losing team)
-
--KO streak award (If a player gets 3 or more final hits in quick succession, they get a badge for how many they got – 3-6 are tracked as numbers, 7 or more is classed as “Unstoppable!”.)
-
-(And yes KO streak is not a streak of KOs. The game confusingly calls it that for some reason. This is not particularly important however.)
-
-Optional - Limited team stats:
-
--An entry for each other team member (5 players), containing their class and how many times they died
 
 
 # Set up
@@ -83,6 +69,8 @@ From main directory:
   flask run
 
 Can now access site on http://127.0.0.1:5000
+
+All users's passwords are "security" (ignore quotes) 
 ```
 
 # Testing
