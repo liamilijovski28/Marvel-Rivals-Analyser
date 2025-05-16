@@ -280,28 +280,6 @@ def friends():
 
     return render_template("Friends.html", accepted=accepted, incoming=incoming)
 
-@app.route("/respond_request/<int:req_id>/<action>", methods=["POST"])
-@login_required
-def respond_request(req_id, action):
-    req = FriendRequest.query.get_or_404(req_id)
-
-    if req.receiver_id != current_user.username:
-        flash("Unauthorized action.", "danger")
-        return redirect(url_for("friends"))
-
-    if action == "accept":
-        req.status = "accepted"
-        sender = User.query.filter_by(username=req.sender_id).first()
-        receiver = User.query.filter_by(username=req.receiver_id).first()
-        sender.friends.append(receiver)
-        receiver.friends.append(sender)
-    elif action == "reject":
-        req.status = "rejected"
-
-    db.session.commit()
-    return redirect(url_for("friends"))
-
-
 @app.route("/compare")
 @login_required
 def compare():
@@ -421,3 +399,65 @@ def signup():
         return redirect(url_for('home'))
     
     return render_template("signup.html", form=form)
+
+@app.route("/respond_request/<int:req_id>/<action>", methods=["POST"])
+@login_required
+def respond_request(req_id, action):
+    req = FriendRequest.query.get_or_404(req_id)
+
+    if req.receiver_id != current_user.username:
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for("friends"))
+
+    sender = User.query.filter_by(username=req.sender_id).first()
+    receiver = User.query.filter_by(username=req.receiver_id).first()
+
+    if not sender or not receiver:
+        flash("User not found.", "danger")
+        return redirect(url_for("friends"))
+
+    if action == "accept":
+        req.status = "accepted"
+
+        # Add each other as friends (if not already)
+        if receiver not in sender.friends:
+            sender.friends.append(receiver)
+        if sender not in receiver.friends:
+            receiver.friends.append(sender)
+
+        flash(f"You are now friends with {sender.username}.", "success")
+
+    elif action == "reject":
+        req.status = "rejected"
+        flash("Friend request rejected.", "info")
+
+    db.session.commit()
+    return redirect(url_for("friends"))
+
+
+@app.route("/remove_friend/<username>", methods=["POST"])
+@login_required
+def remove_friend(username):
+    print(f"Trying to remove: {username}")
+    user = current_user
+    friend = User.query.filter_by(username=username).first()
+    
+    
+    print(f"Current user: {user.username}")
+    print(f"User's friends: {[f.username for f in user.friends]}")
+    print(f"Friend to remove: {friend.username if friend else 'None'}")
+    
+    
+    if not friend:
+        flash("Friend not found.", "danger")
+        return redirect(url_for("friends"))
+
+    # Remove the friend both ways if they exist
+    if friend in user.friends:
+        user.friends.remove(friend)
+    if user in friend.friends:
+        friend.friends.remove(user)
+
+    db.session.commit()
+    flash(f"Removed {username} from your friends list.", "success")
+    return redirect(url_for("friends"))

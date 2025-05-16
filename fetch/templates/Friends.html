@@ -58,7 +58,6 @@
               <a class="friend-button compare" href="{{ url_for('compare') }}?friend={{ friend }}">Compare</a>
               <form method="POST" action="{{ url_for('remove_friend', username=friend) }}" style="display:inline;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
                 <button class="friend-button" type="submit">Remove</button>
               </form>
             </div>
