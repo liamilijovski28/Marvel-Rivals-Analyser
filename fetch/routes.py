@@ -9,6 +9,52 @@ from flask_login import login_required, current_user, login_user, logout_user
 from fetch.models import User, FriendRequest
 from fetch.blueprints import blueprint
 
+def get_simplified_hero_stats(player_id, season=None):
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    season_list = ["0", "1", "1.5", "2"] if not season else [season]
+    base_url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    hero_data = {}
+
+    for s in season_list:
+        url = f"{base_url}?season={s}"
+        try:
+            res = requests.get(url, headers=headers).json()
+        except Exception as e:
+            print(f"Error fetching hero stats for season {s}: {e}")
+            continue
+
+        for mode in ["ranked", "unranked"]:
+            for h in res.get(f"heroes_{mode}", []):
+                name = h["hero_name"].title()
+                if name not in hero_data:
+                    hero_data[name] = {
+                        "matches": 0, "wins": 0, "kills": 0, "deaths": 0
+                    }
+                hero_data[name]["matches"] += h.get("matches", 0)
+                hero_data[name]["wins"] += h.get("wins", 0)
+                hero_data[name]["kills"] += h.get("kills", 0)
+                hero_data[name]["deaths"] += h.get("deaths", 0)
+
+    simplified_stats = {}
+    for hero, stats in hero_data.items():
+        matches = stats["matches"]
+        wins = stats["wins"]
+        kills = stats["kills"]
+        deaths = stats["deaths"]
+        win_pct = round((wins / matches) * 100, 1) if matches else 0
+        kda = round((kills / deaths), 1) if deaths else kills
+        simplified_stats[hero] = {
+            "Matches": matches,
+            "WinPct": win_pct,
+            "KDA": kda
+        }
+
+    return simplified_stats
+
+
 def get_total_hero_stats(player_id, season=None):
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
@@ -379,18 +425,20 @@ def friends():
 @blueprint.route("/compare")
 @login_required
 def compare():
-    from fetch.models import User  # just to be safe
+    from fetch.models import User
     player_id = current_user.get_id()
     season = request.args.get("season")
     friend_username = request.args.get("friend")
 
-    # Get own stats and augment with hero totals
+    # --- Get own stats ---
     user_stats = get_overall_stats(player_id, season)
     user_hero_totals = get_total_hero_stats(player_id, season)
     user_stats.update(user_hero_totals)
+    user_hero_stats = get_simplified_hero_stats(player_id, season)
 
-    # Setup friend stats
+    # --- Friend stats setup ---
     friend_stats = {}
+    friend_hero_stats = {}
     friend_name = None
 
     if friend_username:
@@ -400,15 +448,30 @@ def compare():
             friend_stats = get_overall_stats(friend_user.player_id, season)
             friend_hero_totals = get_total_hero_stats(friend_user.player_id, season)
             friend_stats.update(friend_hero_totals)
+            friend_hero_stats = get_simplified_hero_stats(friend_user.player_id, season)
+
+    # --- Gather accepted friends ---
+    accepted = FriendRequest.query.filter(
+        ((FriendRequest.sender_id == current_user.username) | (FriendRequest.receiver_id == current_user.username)) &
+        (FriendRequest.status == 'accepted')
+    ).all()
+
+    friends = []
+    for fr in accepted:
+        other_username = fr.sender_id if fr.receiver_id == current_user.username else fr.receiver_id
+        friend_obj = User.query.filter_by(username=other_username).first()
+        if friend_obj:
+            friends.append(friend_obj)
 
     return render_template(
         "compare.html",
         user_stats=user_stats,
         friend_stats=friend_stats,
-        friend_name=friend_name
+        friend_name=friend_name,
+        user_hero_stats=user_hero_stats,
+        friend_hero_stats=friend_hero_stats,
+        friends=friends  # ✅ friend dropdown data
     )
-
-
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])
