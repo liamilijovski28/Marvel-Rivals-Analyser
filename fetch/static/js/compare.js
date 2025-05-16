@@ -43,22 +43,13 @@ const heroStats = {
   friend: friendHeroStatsFromFlask || {}
 };
 
-const heroNames = Object.keys(heroStats.user || {});
-
-// 🔒 These are still hardcoded for now
-const roleNames = ["Vanguard", "Duelist", "Support"];
 const roleStats = {
-  user: {
-    "Vanguard": { "Matches": 362, "WinPct": 49.4, "KDA": 6.5 },
-    "Duelist": { "Matches": 78, "WinPct": 40.8, "KDA": 7.1 },
-    "Support": { "Matches": 360, "WinPct": 39.2, "KDA": 6.6 }
-  },
-  friend: {
-    "Vanguard": { "Matches": 497, "WinPct": 51.9, "KDA": 2.9 },
-    "Duelist": { "Matches": 302, "WinPct": 42.6, "KDA": 3.1 },
-    "Support": { "Matches": 316, "WinPct": 43.8, "KDA": 7.6 }
-  }
+  user: userRoleStatsFromFlask || {},
+  friend: friendRoleStatsFromFlask || {}
 };
+
+const heroNames = Object.keys(heroStats.user || {});
+const roleNames = Object.keys(roleStats.user || {});
 
 const fmt = new Intl.NumberFormat();
 const params = new URLSearchParams(window.location.search);

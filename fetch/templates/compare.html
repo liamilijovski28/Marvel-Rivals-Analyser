@@ -56,25 +56,31 @@
   </section>
 
   <section class="content-area">
+    <!-- Dynamic JS-rendered content goes here -->
   </section>
 
+  <!-- Injecting dynamic Flask context -->
   <script>
     const userStatsFromFlask = {{ user_stats | tojson | default('{}', true) }};
     const friendStatsFromFlask = {{ friend_stats | tojson | default('{}', true) }};
     const userHeroStatsFromFlask = {{ user_hero_stats | tojson | default('{}', true) }};
     const friendHeroStatsFromFlask = {{ friend_hero_stats | tojson | default('{}', true) }};
+    const userRoleStatsFromFlask = {{ user_role_stats | tojson | default('{}', true) }};
+    const friendRoleStatsFromFlask = {{ friend_role_stats | tojson | default('{}', true) }};
   </script>
 
+  <!-- Comparison logic -->
   <script src="{{ url_for('main.static', filename='js/compare.js') }}"></script>
 
+  <!-- Dropdown filter logic -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const friendSelect = document.getElementById("friend-select");
       const seasonSelect = document.getElementById("season-select");
 
       function updateCompareURL() {
-        const friend = friendSelect.value;
-        const season = seasonSelect.value;
+        const friend = friendSelect?.value;
+        const season = seasonSelect?.value;
         const params = new URLSearchParams();
         if (friend) params.set("friend", friend);
         if (season) params.set("season", season);

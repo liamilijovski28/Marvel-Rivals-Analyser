@@ -9,6 +9,62 @@ from flask_login import login_required, current_user, login_user, logout_user
 from fetch.models import User, FriendRequest
 from fetch.blueprints import blueprint
 
+def get_role_stats(player_id, season=None):
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    season_list = ["0", "1", "1.5", "2"] if not season else [season]
+    base_url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    role_mapping = {
+        "Vanguard": [
+            "Captain America", "Doctor Strange", "Emma Frost", "Groot", "Hulk", "Magneto", "Peni Parker", "The Thing", "Thor", "Venom"
+        ],
+        "Support": [
+            "Adam Warlock", "Cloak & Dagger", "Invisible Woman", "Jeff the Land Shark", "Loki", "Luna Snow", "Mantis", "Rocket Raccoon"
+        ],
+        "Duelist": [
+            "Black Panther", "Black Widow", "Hawkeye", "Hela", "Human Torch", "Iron Fist", "Iron Man", "Magik", "Mister Fantastic",
+            "Moon Knight", "Namor", "Psylocke", "Scarlet Witch", "Spider-man", "Squirrel Girl", "Star-Lord", "Storm", "The Punisher",
+            "Winter Soldier", "Wolverine"
+        ]
+    }
+
+    role_stats = {role: {"matches": 0, "wins": 0, "kills": 0, "deaths": 0} for role in role_mapping}
+
+    for season_id in season_list:
+        url = f"{base_url}?season={season_id}"
+        try:
+            res = requests.get(url, headers=headers).json()
+        except Exception as e:
+            print(f"Error fetching role stats for season {season_id}: {e}")
+            continue
+
+        for mode in ["ranked", "unranked"]:
+            for hero in res.get(f"heroes_{mode}", []):
+                hero_name = hero["hero_name"].title()
+                for role, heroes in role_mapping.items():
+                    if hero_name in heroes:
+                        role_stats[role]["matches"] += hero.get("matches", 0)
+                        role_stats[role]["wins"] += hero.get("wins", 0)
+                        role_stats[role]["kills"] += hero.get("kills", 0)
+                        role_stats[role]["deaths"] += hero.get("deaths", 0)
+
+    simplified = {}
+    for role, stats in role_stats.items():
+        m = stats["matches"]
+        w = stats["wins"]
+        k = stats["kills"]
+        d = stats["deaths"]
+        simplified[role] = {
+            "Matches": m,
+            "WinPct": round((w / m) * 100, 1) if m else 0,
+            "KDA": round((k / d), 1) if d else k
+        }
+
+    return simplified
+
+
 def get_simplified_hero_stats(player_id, season=None):
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
@@ -430,15 +486,17 @@ def compare():
     season = request.args.get("season")
     friend_username = request.args.get("friend")
 
-    # --- Get own stats ---
+    # --- Get user's overall + hero + role stats ---
     user_stats = get_overall_stats(player_id, season)
     user_hero_totals = get_total_hero_stats(player_id, season)
     user_stats.update(user_hero_totals)
     user_hero_stats = get_simplified_hero_stats(player_id, season)
+    user_role_stats = get_role_stats(player_id, season)
 
-    # --- Friend stats setup ---
+    # --- Friend stats placeholders ---
     friend_stats = {}
     friend_hero_stats = {}
+    friend_role_stats = {}
     friend_name = None
 
     if friend_username:
@@ -449,8 +507,9 @@ def compare():
             friend_hero_totals = get_total_hero_stats(friend_user.player_id, season)
             friend_stats.update(friend_hero_totals)
             friend_hero_stats = get_simplified_hero_stats(friend_user.player_id, season)
+            friend_role_stats = get_role_stats(friend_user.player_id, season)
 
-    # --- Gather accepted friends ---
+    # --- Friend list for dropdown ---
     accepted = FriendRequest.query.filter(
         ((FriendRequest.sender_id == current_user.username) | (FriendRequest.receiver_id == current_user.username)) &
         (FriendRequest.status == 'accepted')
@@ -470,8 +529,11 @@ def compare():
         friend_name=friend_name,
         user_hero_stats=user_hero_stats,
         friend_hero_stats=friend_hero_stats,
-        friends=friends  # ✅ friend dropdown data
+        user_role_stats=user_role_stats,
+        friend_role_stats=friend_role_stats,
+        friends=friends
     )
+
 
 
 @blueprint.route("/settings", methods=["GET", "POST"])
