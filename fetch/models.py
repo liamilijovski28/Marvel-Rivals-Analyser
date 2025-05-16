@@ -1,4 +1,4 @@
-from fetch import app, db
+from fetch import db
 from flask_login import UserMixin
 
 class User(UserMixin,db.Model):

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heroes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='styles/style.css') }}">
 </head>
 <body class="heroes-page">
     {% set current_path = request.path %}
@@ -45,7 +45,7 @@
                 {% for hero_name in all_heroes[role] %}
                     {% set s = heroes.get(hero_name.title(), {}) %}
                     <div class="hero-card" onclick="toggleStats(this)">
-                        <img src="{{ url_for('static', filename='styles/images/hero-stats-tiles/' ~ hero_name|replace(' ', '_')|replace('-', '_') ~ '_Tile.webp') }}"
+                        <img src="{{ url_for('main.static', filename='styles/images/hero-stats-tiles/' ~ hero_name|replace(' ', '_')|replace('-', '_') ~ '_Tile.webp') }}"
                              alt="{{ hero_name }}" loading="lazy">
                     </div>
 
@@ -80,7 +80,7 @@
         {% endfor %}
     </main>
 
-    <script src="{{ url_for('static', filename='js/hero_page.js') }}"></script>
+    <script src="{{ url_for('main.static', filename='js/hero_page.js') }}"></script>
     
 </body>
 </html>

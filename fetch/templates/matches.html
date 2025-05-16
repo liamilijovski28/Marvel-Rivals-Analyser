@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Match History</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-  <script src="{{ url_for('static', filename='js/matches.js') }}" defer></script>
+  <link rel="stylesheet" href="{{ url_for('main.static', filename='styles/style.css') }}">
+  <script src="{{ url_for('main.static', filename='js/matches.js') }}" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 
@@ -16,11 +16,11 @@
   <section class="matches-profile-section">
     <section id="matches-profile-header">
       <div id="matches-profile-banner">
-        <img src="{{ url_for('static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
+        <img src="{{ url_for('main.static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
         <div id="matches-overlay"></div>
         <div id="matches-profile-info-wrapper">
           <div id="matches-profile-picture">
-            <img src="{{ url_for('static', filename='styles/images/profilepic.jpg') }}" alt="Profile Picture" />
+            <img src="{{ url_for('main.static', filename='styles/images/profilepic.jpg') }}" alt="Profile Picture" />
           </div>
           <div id="matches-player-meta">
             <h1 id="playerName">{{ display_name }}</h1>

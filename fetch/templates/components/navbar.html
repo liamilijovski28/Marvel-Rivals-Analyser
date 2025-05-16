@@ -1,17 +1,17 @@
 <header class="navbar">
     <nav class="nav-links">
-        <a class="{{ 'active' if request.path in ['/', '/home'] else '' }}" href="{{ url_for('home') }}">Home</a>
-        <a class="{{ 'active' if request.path == '/friends' }}" href="{{ url_for('friends') }}">Friends</a>
-        <a class="{{ 'active' if request.path == '/heroes'  }}" href="{{ url_for('heroes')  }}">Heroes</a>
-        <a class="{{ 'active' if request.path == '/matches' }}" href="{{ url_for('matches') }}">Matches</a>
-        <a class="{{ 'active' if 'compare' in request.full_path }}" href="{{ url_for('compare') }}">Compare</a>
-        <a class="{{ 'active' if request.path == '/settings' }}" href="{{ url_for('settings') }}">Settings</a>
+        <a class="{{ 'active' if request.path in ['/', '/home'] else '' }}" href="{{ url_for('main.home') }}">Home</a>
+        <a class="{{ 'active' if request.path == '/friends' }}" href="{{ url_for('main.friends') }}">Friends</a>
+        <a class="{{ 'active' if request.path == '/heroes'  }}" href="{{ url_for('main.heroes')  }}">Heroes</a>
+        <a class="{{ 'active' if request.path == '/matches' }}" href="{{ url_for('main.matches') }}">Matches</a>
+        <a class="{{ 'active' if 'compare' in request.full_path }}" href="{{ url_for('main.compare') }}">Compare</a>
+        <a class="{{ 'active' if request.path == '/settings' }}" href="{{ url_for('main.settings') }}">Settings</a>
     </nav>
 
     <form class="nav-search" action="#" method="get">
         <input type="text" name="q" placeholder="Search players..." aria-label="Search players">
         <button type="submit">
-            <img src="{{ url_for('static', filename='styles/images/search-icon.png') }}" alt="">
+            <img src="{{ url_for('main.static', filename='styles/images/search-icon.png') }}" alt="">
         </button>
     </form>
 </header>

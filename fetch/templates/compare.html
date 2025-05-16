@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Marvel Rivals - Compare</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style_Pineapple.css') }}">
+  <link rel="stylesheet" href="{{ url_for('main.static', filename='styles/style_Pineapple.css') }}">
 </head>
 <body>
   {% set current_path = request.path %}
@@ -11,7 +11,7 @@
   {% include "Components/navbar.html" %}
 
   <section class="banner-container">
-    <img src="{{ url_for('static', filename='styles/images/banner.png') }}" alt="Marvel Rivals Banner" class="banner-img" />
+    <img src="{{ url_for('main.static', filename='styles/images/banner.png') }}" alt="Marvel Rivals Banner" class="banner-img" />
     <div class="vs-container">
       <div class="player">
         <img src="images/profile-placeholder.png" alt="Your profile">
@@ -59,6 +59,6 @@
   <section class="content-area">
   </section>
 
-  <script src="{{ url_for('static', filename='js/compare.js') }}"></script>
+  <script src="{{ url_for('main.static', filename='js/compare.js') }}"></script>
 </body>
 </html>

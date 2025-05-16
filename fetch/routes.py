@@ -1,12 +1,14 @@
-from fetch import app, db
+from fetch import db
 import requests
+from fetch.controllers import try_login, try_signup
 from flask import jsonify, session, render_template, redirect, url_for, flash
 from fetch.forms import LoginForm, SignupForm, SettingsForm
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
 from fetch.models import RestrictedFriends, Stats, User  # Import your User model
 from flask_login import login_required, current_user, login_user, logout_user
+from fetch.blueprints import blueprint
 
-@app.route('/home')
+@blueprint.route('/home')
 @login_required
 def home():
     player_id = current_user.get_id()  # Default to a test player ID if not logged in
@@ -61,7 +63,7 @@ def home():
     return render_template('home page.html', title='Home', player=player)
 
 
-@app.route('/heroes')
+@blueprint.route('/heroes')
 @login_required
 def heroes():
     from flask import request
@@ -72,7 +74,7 @@ def heroes():
 
     if not player_id:
         flash("You must be logged in to view your hero stats.", "danger")
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
@@ -179,14 +181,14 @@ def heroes():
 
     return render_template('Heroes.html', title='Heroes', heroes=hero_agg, all_heroes=all_heroes)
 
-@app.route('/matches')
+@blueprint.route('/matches')
 @login_required
 def matches():
     player_id = current_user.get_id()
 
     if not player_id:
         flash("You must be logged in to view your match stats.", "danger")
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
@@ -219,7 +221,7 @@ def matches():
 
     return render_template("matches.html", username=player_id, display_name=display_name, stats=stats)
 
-@app.route('/api/player/<player_id>/matches')
+@blueprint.route('/api/player/<player_id>/matches')
 def player_matches(player_id):
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
@@ -231,7 +233,7 @@ def player_matches(player_id):
     return jsonify(response.json())
 
 
-@app.route('/api/heroes')
+@blueprint.route('/api/heroes')
 def get_heroes():
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
@@ -243,17 +245,17 @@ def get_heroes():
     return jsonify(response.json())
 
 
-@app.route("/friends")
+@blueprint.route("/friends")
 @login_required
 def friends():
     return render_template("Friends.html")
 
-@app.route("/compare")
+@blueprint.route("/compare")
 @login_required
 def compare():
     return render_template("compare.html")
 
-@app.route("/settings", methods=["GET", "POST"])
+@blueprint.route("/settings", methods=["GET", "POST"])
 @login_required
 def settings():
     form = SettingsForm()
@@ -294,76 +296,45 @@ def settings():
         if form.logout.data:
             logout_user()
             flash("You have been logged out.", "success")
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         if form.close_account.data:
             user = current_user
             db.session.delete(user)
             db.session.commit()
             flash("Your account has been closed.", "success")
-            return redirect(url_for('signup'))
+            return redirect(url_for('main.signup'))
         if not form.logout.data and not form.close_account.data:
             # If neither logout nor close account was pressed
             flash("Settings updated successfully!", "success")
-        return redirect(url_for('settings'))
+        return redirect(url_for('main.settings'))
     return render_template("settings.html", form=form)
 
-@app.route('/')
-@app.route('/login', methods=['GET', 'POST'])
+@blueprint.route('/')
+@blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # Check if the username exists in the database
-        username = form.username.data
-        password = form.password.data
-        user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            # If the username exists and the password is correct
-            login_user(user)  # Log the user in
-            return redirect(url_for('home'))
+        result = try_login(form.username.data, form.password.data)
+        if isinstance(result, User):
+            login_user(result)
+            return redirect(url_for('main.home'))
         else:
-            # If the username doesn't exist or the password is incorrect
-            flash('Invalid username or password. Please try again.', 'danger')
-            return redirect(url_for('login')) 
+            flash(result, 'danger')
+            return redirect(url_for('main.login'))
     return render_template('login.html', form=form)
 
 
-@app.route("/signup", methods=["GET", "POST"])
+@blueprint.route("/signup", methods=["GET", "POST"])
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
 
-        username = form.username.data
-        password = form.password.data
-        player_id = form.player_id.data.strip()
-        if not player_id.isdigit() or len(player_id) != 9:
-            flash("Player ID must be exactly 9 digits.", "danger")
-            return render_template("signup.html", form=form)
-
-        # Check if the username already exists
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash('Username already exists. Please choose something else.', 'danger')
-            return render_template("signup.html", form=form)
-        
-        # Check if the playerid already is connected to an account
-        existing_player = User.query.filter_by(player_id=player_id).first()
-        if existing_player:
-            flash("That Player ID is already linked to another account.", "danger")
-            return render_template("signup.html", form=form)
-
-        # Hash the password before saving it to the database
-        hashed_password = generate_password_hash(password)
-
-        # Create a new user with the hashed password and add to the database
-        new_user = User(username=username, password=hashed_password, player_id=player_id)
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            flash(f"An error occurred: {str(e)}", "danger")
-            return redirect(url_for('signup'))
-        session['user_id'] = player_id
-        return redirect(url_for('home'))
+        new_user = try_signup(form.username.data, form.password.data, form.player_id.data)
+        if isinstance(new_user, User):
+            login_user(new_user)
+        else:
+            flash(new_user, 'danger')
+            return redirect(url_for('main.signup'))
+        return redirect(url_for('main.home'))
     
     return render_template("signup.html", form=form)
