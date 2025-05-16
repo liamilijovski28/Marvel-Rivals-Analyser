@@ -1,6 +1,7 @@
-const username = document.getElementById("playerName")?.textContent?.trim();
+const username =
+      document.body.dataset.username ||
+      document.getElementById("playerName")?.textContent?.trim();
 
-// Map hero names to image filenames
 const heroImageMap = {
   "adam warlock": "AdamWarlock.png",
   "black panther": "BlackPanther.png",
@@ -13,6 +14,7 @@ const heroImageMap = {
   "hawkeye": "Hawkeye.png",
   "hela": "Hela.png",
   "hulk": "Hulk.png",
+  "human torch": "HumanTorch.png",
   "invisible woman": "InvisibleWoman.png",
   "iron fist": "IronFist.png",
   "iron man": "IronMan.png",
@@ -38,135 +40,235 @@ const heroImageMap = {
   "thor": "Thor.png",
   "venom": "Venom.png",
   "winter soldier": "WinterSoldier.png",
-  "wolverine": "Wolverine.png"
+  "wolverine": "Wolverine.png",
+
 };
 
-function getHeroImagePath(heroNameRaw) {
-  const heroName = heroNameRaw.trim().toLowerCase();
-  const filename = heroImageMap[heroName];
-  if (!filename) {
-    return "/static/styles/images/hero_placeholder.png";
-  }
-  return `/static/styles/images/heroes/${filename}`;
+const heroSrc = n =>
+  `/static/styles/images/heroes/${heroImageMap[n.toLowerCase()] ?? "Unknown.png"}`;
+
+const heroIdToName = {};
+async function loadHeroCatalogue() {
+  const r = await fetch("/api/heroes");
+  (await r.json()).forEach(h => (heroIdToName[h.hero_id] = h.hero_name));
 }
 
-const heroMap = {};
+const modeName = id =>
+  ({ 1: "Convergence", 2: "Domination", 3: "Convoy" }[id] || "Quick Match");
 
-async function loadHeroes() {
-  const res = await fetch("/api/heroes");
-  const heroes = await res.json();
-  heroes.forEach(h => heroMap[h.hero_id] = h.hero_name);
-}
+const mapDict = {
+  1: "Central Park",
+  2: "Royal Palace",
+  3: "Midtown",
+  4: "Symbiotic Surface",
+  5: "Hall of Paiia",
+  6: "Shin-Shibuya"
+};
+const mapName = id => mapDict[id] ?? null;
 
-function formatDate(ts) {
-  const options = { month: 'short', day: 'numeric' };
-  return new Date(ts * 1000).toLocaleDateString(undefined, options);
-}
+const kda = (k, d, a) => (d === 0 ? (k + a).toFixed(2) : ((k + a) / d).toFixed(2));
 
-function groupMatchesByDate(matchHistory) {
-  const dailyMap = {};
-  matchHistory.forEach(match => {
-    const date = new Date(match.match_time_stamp * 1000);
-    const key = date.toISOString().split("T")[0]; // YYYY-MM-DD
-    dailyMap[key] = (dailyMap[key] || 0) + 1;
+/* ---------- win detector ---------- */
+const winCheck = (player, match) =>
+  String(player.camp).toUpperCase() ===
+  String(match.match_winner_side).toUpperCase();
+
+/* ---------- heat-map bookkeeping ---------- */
+const dailyCounts = {};
+function bumpHeat(matches) {
+  matches.forEach(m => {
+    const k = new Date(m.match_time_stamp * 1000).toISOString().slice(0, 10);
+    dailyCounts[k] = (dailyCounts[k] ?? 0) + 1;
   });
-  return dailyMap;
 }
-
-function renderHeatmap(dailyCounts) {
-  const heatmap = document.getElementById("heatmap-grid");
+function drawHeat() {
+  const grid = document.getElementById("heatmap-grid");
+  grid.innerHTML = "";
   const today = new Date();
-
   for (let i = 59; i >= 0; i--) {
-    const day = new Date(today);
-    day.setDate(day.getDate() - i);
-    const key = day.toISOString().split("T")[0];
-    const count = dailyCounts[key] || 0;
-
-    let level = 0;
-    if (count >= 9) level = 4;
-    else if (count >= 6) level = 3;
-    else if (count >= 3) level = 2;
-    else if (count >= 1) level = 1;
-
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const cnt = dailyCounts[key] ?? 0;
+    const lvl = cnt === 0 ? 0 : cnt < 3 ? 1 : cnt < 6 ? 2 : cnt < 9 ? 3 : 4;
     const cell = document.createElement("div");
-    cell.className = `heatmap-cell level-${level}`;
-    cell.title = `${key}: ${count} match${count !== 1 ? "es" : ""}`;
-    heatmap.appendChild(cell);
+    cell.className = `heatmap-cell level-${lvl}`;
+    cell.title = `${key}: ${cnt} match${cnt !== 1 ? "es" : ""}`;
+    grid.appendChild(cell);
   }
 }
 
-async function loadMatches() {
-  const res = await fetch(`/api/player/${username}/matches`);
-  const data = await res.json();
-  const container = document.getElementById("matches");
+/* ---------- per-day aggregation ---------- */
+const dayContainers = {};
+function getDayBlock(key, label) {
+  if (dayContainers[key]) return dayContainers[key];
 
-  if (!data.match_history) {
-    container.innerHTML = "No match history.";
-    return;
-  }
+  const wrap = document.createElement("section");
+  wrap.className = "match-day";
 
-  const dailyCounts = groupMatchesByDate(data.match_history);
-  renderHeatmap(dailyCounts);
+  const header = document.createElement("div");
+  header.className = "match-date-header";
+  header.innerHTML =
+    `<span class="date-label">${label}</span>
+     <span class="day-stats">0 W // 0 L · Avg KDA 0</span>`;
+  wrap.appendChild(header);
 
-  const grouped = {};
-  data.match_history.forEach(match => {
-    const dateKey = formatDate(match.match_time_stamp);
-    if (!grouped[dateKey]) grouped[dateKey] = [];
-    grouped[dateKey].push(match);
+  const bucket = document.createElement("div");
+  bucket.className = "day-card-list";
+  wrap.appendChild(bucket);
+
+  list.insertBefore(wrap, sentinel);
+
+  const stats = { w: 0, l: 0, k: 0, d: 0, a: 0, header };
+  return (dayContainers[key] = { bucket, stats });
+}
+function updateDayStats(s, p, win) {
+  win ? s.w++ : s.l++;
+  s.k += p.kills;
+  s.d += p.deaths;
+  s.a += p.assists;
+  const ratio = s.d === 0 ? s.k + s.a : (s.k + s.a) / s.d;
+  s.header.querySelector(".day-stats").textContent =
+    `${s.w} W // ${s.l} L · Avg KDA ${ratio.toFixed(2)}`;
+}
+
+/* ---------- compact card template ---------- */
+function cardFor(match) {
+  const p = match.match_player;
+  const hero =
+    p.player_hero
+      ? p.player_hero.hero_name
+      : heroIdToName[p.player_hero?.hero_id] ?? "Unknown";
+  const img = heroSrc(hero);
+  const win = winCheck(p, match);
+
+  const card = document.createElement("div");
+  card.className = "match-card--compact";
+
+  /* portrait */
+  const pic = document.createElement("img");
+  pic.className = "hero-thumb";
+  pic.src = img;
+  pic.alt = hero;
+  card.appendChild(pic);
+
+  /* meta */
+  const meta = document.createElement("div");
+  meta.className = "match-meta";
+
+  const ts = new Date(match.match_time_stamp * 1000).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
   });
+  const map = mapName(match.match_map_id);
 
-  Object.keys(grouped).forEach(date => {
-    const matches = grouped[date];
-    const wins = matches.filter(m => {
-      const p = m.match_player;
-      return p.camp && m.match_winner_side && p.camp === m.match_winner_side;
-    }).length;
+  meta.innerHTML = `
+    <div class="meta-row mode-map">
+      ${modeName(match.game_mode_id)}${map ? ` • ${map}` : ""} • ${ts}
+    </div>
 
-    const losses = matches.length - wins;
+    <div class="meta-row kda-row">
+      <span>Kills ${p.kills}</span>
+      <span>Deaths ${p.deaths}</span>
+      <span>Assists ${p.assists}</span>
+      <span>KDA ${kda(p.kills,p.deaths,p.assists)}</span>
+    </div>
 
-    const dayBlock = document.createElement("div");
-    dayBlock.className = "match-day";
+    <div class="meta-row dmg-row">
+      <span>Damage ${Math.round(p.player_hero?.total_hero_damage ?? 0).toLocaleString()}</span>
+      <span>Healing ${Math.round(p.player_hero?.total_hero_heal ?? 0).toLocaleString()}</span>
+      <span>Blocked ${Math.round(
+        p.player_hero?.total_hero_blocked ??
+          p.player_hero?.total_damage_taken ??
+          0
+      ).toLocaleString()}</span>
+    </div>`;
+  card.appendChild(meta);
 
-    const header = document.createElement("div");
-    header.className = "match-date-header";
-    header.innerHTML = `<span>${date}</span><span class="daily-summary">${wins} W // ${losses} L</span>`;
-    dayBlock.appendChild(header);
+  /* result pill */
+  const pill = document.createElement("div");
+  pill.className = `result-pill ${win ? "victory" : "defeat"}`;
+  pill.textContent = win ? "Victory" : "Defeat";
+  card.appendChild(pill);
 
-    matches.forEach(match => {
-      const player = match.match_player;
-      const heroName = player.player_hero ? player.player_hero.hero_name : "Unknown";
-      const isWin = player.camp && match.match_winner_side && player.camp === match.match_winner_side ? "Victory" : "Defeat";
-      const kda = `${player.kills}/${player.deaths}/${player.assists}`;
-      const scoreInfo = player.score_info;
-      let rs = scoreInfo ? (scoreInfo.add_score || "Not Available") : "Not Available";
-      if (typeof rs === "number") rs = Math.round(rs);
-      const dateTime = new Date(match.match_time_stamp * 1000).toLocaleString();
+  return { card, win };
+}
 
-      const matchCard = document.createElement("div");
-      matchCard.className = "match-card";
-      matchCard.innerHTML = `
-        <div class="hero-image-container">
-          <img loading="lazy" src="${getHeroImagePath(heroName)}" alt="${heroName}">
-          <div class="hero-name">${heroName}</div>
-          <div class="kda">K/D/A: ${kda}</div>
-        </div>
-        <div class="match-details">
-          <div class="match-meta">
-            <p>RS Change: ${rs}</p>
-            <p>Date: ${dateTime}</p>
-          </div>
-          <div class="result ${isWin === "Victory" ? 'win' : 'loss'}">${isWin}</div>
-        </div>
-      `;
-      dayBlock.appendChild(matchCard);
+let nextSkip = 0,
+  loading = false;
+const PAGE = 20;
+
+/* 4 shimmer placeholders */
+function showPH() {
+  for (let i = 0; i < 4; i++) {
+    const ph = document.createElement("div");
+    ph.className = "match-card--compact placeholder";
+    list.insertBefore(ph, sentinel);
+    placeholders.push(ph);
+  }
+}
+function hidePH() {
+  placeholders.splice(0).forEach(p => p.remove());
+}
+const placeholders = [];
+
+async function fetchPage() {
+  loading = true;
+  showPH();
+  const r = await fetch(`/api/player/${username}/matches?skip=${nextSkip}`);
+  hidePH();
+  loading = false;
+  if (!r.ok) throw new Error(r.statusText);
+  nextSkip += PAGE;
+  return (await r.json()).match_history ?? [];
+}
+
+/* ---------- render pipeline ---------- */
+const list = document.getElementById("matches");
+const sentinel = document.createElement("div");
+sentinel.id = "scroll-sentinel";
+list.appendChild(sentinel);
+
+async function loadMore() {
+  if (loading) return;
+  try {
+    const rows = await fetchPage();
+    if (!rows.length) {
+      observer.disconnect();
+      return;
+    }
+
+    bumpHeat(rows);
+    drawHeat();
+
+    rows.forEach(row => {
+      const d = new Date(row.match_time_stamp * 1000);
+      const key = d.toISOString().slice(0, 10);
+      const label = d.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+      const { bucket, stats } = getDayBlock(key, label);
+
+      const { card, win } = cardFor(row);
+      bucket.appendChild(card);
+      updateDayStats(stats, row.match_player, win);
     });
-
-    container.appendChild(dayBlock);
-  });
+  } catch (e) {
+    console.error(e);
+  }
 }
 
+/* ---------- infinite scroll ---------- */
+const observer = new IntersectionObserver(
+  e => {
+    if (e[0].isIntersecting) loadMore();
+  },
+  { threshold: 0.1 }
+);
+
+/* ---------- boot ---------- */
 (async () => {
-  await loadHeroes();
-  await loadMatches();
+  await loadHeroCatalogue();
+  await loadMore();
+  observer.observe(sentinel);
 })();
