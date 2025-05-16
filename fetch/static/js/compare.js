@@ -22,8 +22,6 @@ const overallStats = {
     "Damage": userStatsFromFlask.damage,
     "Healing": userStatsFromFlask.healing,
     "Damage Blocked": userStatsFromFlask.blocked,
-    "Max Kill Streak": userStatsFromFlask.max_kill_streak,
-    "MVPs": userStatsFromFlask.mvps,
     "SVPs": userStatsFromFlask.svps
   },
   friend: {
@@ -34,8 +32,6 @@ const overallStats = {
     "Damage": friendStatsFromFlask.damage,
     "Healing": friendStatsFromFlask.healing,
     "Damage Blocked": friendStatsFromFlask.blocked,
-    "Max Kill Streak": friendStatsFromFlask.max_kill_streak,
-    "MVPs": friendStatsFromFlask.mvps,
     "SVPs": friendStatsFromFlask.svps
   }
 };
