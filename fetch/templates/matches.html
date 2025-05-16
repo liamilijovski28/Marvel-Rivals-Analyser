@@ -1,34 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Match History</title>
-  <link rel="stylesheet" href="{{ url_for('main.static', filename='styles/style.css') }}">
-  <script src="{{ url_for('main.static', filename='js/matches.js') }}" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='styles/style.css') }}">
+  <script src="{{ url_for('static', filename='js/matches.js') }}" defer></script>
 </head>
 
-<body class="matches">
+<body class="matches" data-username="{{ display_name }}">
   {% set current_path = request.path %}
   {% include "Components/navbar.html" %}
+  <div class="navbar-fade"></div>
 
-  <!-- Profile Banner + Summary -->
-  <section class="matches-profile-section">
-    <section id="matches-profile-header">
-      <div id="matches-profile-banner">
-        <img src="{{ url_for('main.static', filename='styles/images/marvel-rivals-image-of-characters-with-captain-america-in-front.avif') }}" alt="Profile Banner" class="banner-img" />
-        <div id="matches-overlay"></div>
-        <div id="matches-profile-info-wrapper">
-          <div id="matches-profile-picture">
-            <img src="{{ url_for('main.static', filename='styles/images/profilepic.jpg') }}" alt="Profile Picture" />
-          </div>
-          <div id="matches-player-meta">
-            <h1 id="playerName">{{ display_name }}</h1>
-          </div>
-        </div>
-      </div>
-    </section>
-
+  <section class="matches-hero">
     <section id="matches-player-summary">
       <div class="matches-summary-card">
         <div class="matches-summary-stat">
@@ -48,24 +34,25 @@
           <p class="matches-stat-value">{{ stats.kd }}</p>
         </div>
         <div class="matches-summary-stat">
-          <p class="matches-stat-label">Win %</p>
+          <p class="matches-stat-label">Win&nbsp;%</p>
           <p class="matches-stat-value">{{ stats.win_rate }}%</p>
         </div>
       </div>
     </section>
   </section>
 
-  <!-- Matches Page Layout: Heatmap Left, Match History Right -->
   <div class="match-page-container">
-    <!-- Sidebar Heatmap -->
     <aside id="heatmap-sidebar">
-      <h3>Match Activity - Last 60 Days</h3>
+      <h3>Match Activity&nbsp;- Last&nbsp;60&nbsp;Days</h3>
+
       <div id="heatmap-container">
         <div id="day-labels">
-          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          <span>Sun</span><span>Mon</span><span>Tue</span>
+          <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
         </div>
         <div id="heatmap-grid"></div>
       </div>
+
       <div class="legend">
         <span class="dot level-0"></span> 0
         <span class="dot level-1"></span> 1–2
@@ -75,8 +62,7 @@
       </div>
     </aside>
 
-    <!-- Match History Cards -->
-    <section id="matches"></section>
+    <section id="matches"></section>  <!-- JS injects cards -->
   </div>
 </body>
 </html>

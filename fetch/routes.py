@@ -1,13 +1,12 @@
 from fetch import db
 import requests
 from fetch.controllers import try_change_settings, try_login, try_signup
-from flask import jsonify, session, render_template, redirect, url_for, flash
+from flask import jsonify, session, render_template, redirect, url_for, flash, request
 from fetch.forms import LoginForm, SignupForm, SettingsForm
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
 from fetch.models import RestrictedFriends, Stats, User  # Import your User model
 from flask_login import login_required, current_user, login_user, logout_user
 from fetch.models import User, FriendRequest
-from flask import request
 from fetch.blueprints import blueprint
 
 @blueprint.route('/home')
@@ -225,15 +224,25 @@ def matches():
 
 @blueprint.route('/api/player/<player_id>/matches')
 def player_matches(player_id):
+    """
+    Thin proxy to Marvel Rivals `match-history` endpoint
+    so we can attach our API-key serverside *and* forward
+    pagination / filter query-params untouched.
+    """
     headers = {
         "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
     }
 
+    # read the same optional params the JS might send
+    params = {}
+    if (skip   := request.args.get("skip")):       params["skip"]       = skip
+    if (season := request.args.get("season")):     params["season"]     = season
+    if (gm     := request.args.get("game_mode")):  params["game_mode"]  = gm
+    if (ts     := request.args.get("timestamp")):  params["timestamp"]  = ts
+
     url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}/match-history"
-    response = requests.get(url, headers=headers)
-
-    return jsonify(response.json())
-
+    resp = requests.get(url, headers=headers, params=params)
+    return jsonify(resp.json())
 
 @blueprint.route('/api/heroes')
 def get_heroes():
