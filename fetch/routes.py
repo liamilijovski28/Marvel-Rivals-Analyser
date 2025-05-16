@@ -9,6 +9,54 @@ from flask_login import login_required, current_user, login_user, logout_user
 from fetch.models import User, FriendRequest
 from fetch.blueprints import blueprint
 
+
+def get_overall_stats(player_id, season=None):
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    if season:
+        url += f"?season={season}"
+
+    try:
+        response = requests.get(url, headers=headers)
+        data = response.json()
+    except Exception as e:
+        print(f"Error fetching player data: {e}")
+        return {}
+
+    stats = data.get("overall_stats", {})
+    ranked = stats.get("ranked", {})
+    unranked = stats.get("unranked", {})
+
+    def sum_stat(key):
+        return ranked.get(key, 0) + unranked.get(key, 0)
+
+    kills = sum_stat("total_kills")
+    deaths = sum_stat("total_deaths")
+    assists = sum_stat("total_assists")
+    damage = sum_stat("total_damage_done")
+    healing = sum_stat("total_healing_done")
+    blocked = sum_stat("total_damage_blocked")
+    mvps = sum_stat("total_mvps")
+    svps = sum_stat("total_svp")
+    max_streak = max(ranked.get("max_kill_streak", 0), unranked.get("max_kill_streak", 0))
+
+    return {
+        "kda": round(kills / deaths, 2) if deaths > 0 else kills,
+        "kills": kills,
+        "deaths": deaths,
+        "assists": assists,
+        "damage": damage,
+        "healing": healing,
+        "blocked": blocked,
+        "max_kill_streak": max_streak,
+        "mvps": mvps,
+        "svps": svps
+    }
+
+
 @blueprint.route('/home')
 @login_required
 def home():
@@ -294,7 +342,12 @@ def friends():
 @blueprint.route("/compare")
 @login_required
 def compare():
-    return render_template("compare.html")
+    player_id = current_user.get_id()
+    season = request.args.get("season")
+
+    user_stats = get_overall_stats(player_id, season)
+    return render_template("compare.html", user_stats=user_stats)
+
 
 @blueprint.route("/settings", methods=["GET", "POST"])
 @login_required

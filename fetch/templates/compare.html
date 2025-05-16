@@ -58,7 +58,9 @@
 
   <section class="content-area">
   </section>
-
+  <script>
+    const userStatsFromFlask = {{ user_stats | tojson }};
+  </script>
   <script src="{{ url_for('main.static', filename='js/compare.js') }}"></script>
 </body>
 </html>

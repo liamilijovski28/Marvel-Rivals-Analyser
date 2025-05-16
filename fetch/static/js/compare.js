@@ -14,9 +14,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const overallStats = {
-  user: {"KDA Ratio": 4.05, "Kills": 16665, "Deaths": 6826, "Assists": 15171, "Damage": 785500, "Healing": 69232, "Damage Blocked": 280571, "Max Kill Streak": 28, "MVPs": 73, "SVPs": 191},
+    user: {
+    "KDA Ratio": userStatsFromFlask.kda,
+    "Kills": userStatsFromFlask.kills,
+    "Deaths": userStatsFromFlask.deaths,
+    "Assists": userStatsFromFlask.assists,
+    "Damage": userStatsFromFlask.damage,
+    "Healing": userStatsFromFlask.healing,
+    "Damage Blocked": userStatsFromFlask.blocked,
+    "Max Kill Streak": userStatsFromFlask.max_kill_streak,
+    "MVPs": userStatsFromFlask.mvps,
+    "SVPs": userStatsFromFlask.svps},
+
   friend: {"KDA Ratio": 2.13, "Kills": 12282, "Deaths": 14443, "Assists": 17048, "Damage": 685096, "Healing": 340489, "Damage Blocked": 227136, "Max Kill Streak": 41, "MVPs": 159, "SVPs": 20}
 };
+console.log("Final overallStats.user:", overallStats.user);
+
 
 const statNames = Object.keys(overallStats.user);
 
