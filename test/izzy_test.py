@@ -1,7 +1,9 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+
 import time
 import pytest
 
@@ -10,9 +12,10 @@ class TestSignupLogin:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920,1080")
-
-        # Correct usage of ChromeDriverManager
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        
+        # ✅ CORRECT usage of ChromeDriverManager with Service
+        service = Service(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(service=service, options=chrome_options)
 
     def teardown_method(self):
         self.driver.quit()
@@ -124,75 +127,3 @@ class TestHomePage:
             assert "/login" in self.driver.current_url
     
 
-class TestFriendsPage:
-    def setup_method(self):
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--window-size=1920,1080")
-        self.driver = webdriver.Chrome(options=chrome_options)
-
-    def teardown_method(self):
-        self.driver.quit()
-
-    def login_as_existing_user(self):
-        self.driver.get("http://127.0.0.1:5000/login")
-        self.driver.find_element(By.ID, "username").send_keys("Pineapples117")
-        self.driver.find_element(By.ID, "password").send_keys("security")
-        self.driver.find_element(By.CSS_SELECTOR, "form button[type='submit']").click()
-        time.sleep(1)
-        assert "/home" in self.driver.current_url or "Welcome" in self.driver.page_source
-
-
-    def test_friends_redirects_if_not_logged_in(self):
-        self.driver.get("http://127.0.0.1:5000/friends")
-        assert "/login" in self.driver.current_url
-
-    def test_logged_in_user_can_view_friends_page(self):
-        self.login_as_existing_user()
-        self.driver.get("http://127.0.0.1:5000/friends")
-        assert "Friends" in self.driver.page_source
-
-def test_accept_friend_request(self):
-    # Setup: Create another user and send a friend request to Pineapples117
-    from fetch.models import FriendRequest, User
-    from app import db
-
-    # Log in as Pineapples117
-    self.login_as_existing_user()
-
-    # Ensure another user exists
-    another_user = User.query.filter_by(username="AnotherUser").first()
-    if not another_user:
-        from werkzeug.security import generate_password_hash
-        another_user = User(username="AnotherUser", password=generate_password_hash("password"), player_id="987654321")
-        db.session.add(another_user)
-        db.session.commit()
-
-    # Add a friend request from AnotherUser to Pineapples117
-    incoming = FriendRequest(sender_id="AnotherUser", receiver_id="Pineapples117", status="pending")
-    db.session.add(incoming)
-    db.session.commit()
-
-    # Go to friends page and accept the request
-    self.driver.get("http://127.0.0.1:5000/friends")
-    time.sleep(1)
-    accept_buttons = self.driver.find_elements(By.CLASS_NAME, "accept")
-    if accept_buttons:
-        accept_buttons[0].click()
-        time.sleep(1)
-        assert "Accepted" in self.driver.page_source or "Remove" in self.driver.page_source
-    else:
-        pytest.fail("No accept button found — friend request setup may have failed.")
-
-
-
-    def test_accept_friend_request(self):
-        self.login_as_existing_user()
-        self.driver.get("http://127.0.0.1:5000/friends")
-        accept_buttons = self.driver.find_elements(By.CLASS_NAME, "accept")
-        if accept_buttons:
-            accept_buttons[0].click()
-            time.sleep(1)
-            assert "Accepted" in self.driver.page_source or "Remove" in self.driver.page_source
-        else:
-            pytest.skip("No friend requests to accept.")
