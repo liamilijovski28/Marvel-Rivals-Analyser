@@ -55,8 +55,8 @@ def try_change_settings(new_username=None, new_password=None, new_playerID=None,
                 existing_player = User.query.filter_by(player_id=new_playerID).first()
                 if existing_player:
                     return "That Player ID is already linked to another account."
-                if not new_playerID.isdigit() or len(new_playerID) != 9:
-                    return "Player ID must be exactly 9 digits."
+                if not new_playerID.isdigit() or ( (len(new_playerID) != 9) and (len(new_playerID) != 10)):
+                    return "Player ID must be exactly 9 or 10 digits."
                 user.player_id = new_playerID
  
             rf = RestrictedFriends.query.filter_by(player_id=user.player_id).first()
