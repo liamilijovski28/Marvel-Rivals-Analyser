@@ -4,67 +4,82 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Friends</title>
-  <link rel="stylesheet" href="{{ url_for('main.static', filename='styles/style_Pineapple.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('main.static', filename='styles/style.css') }}">
 </head>
-<body>
+
+<body class="friends-page">
   {% set current_path = request.path %}
   {% include "Components/navbar.html" %}
 
-  <main style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
-    <h1 class="friends-title">Friends</h1>
+  <main class="friends-wrapper">
+    <h1 class="friends-title">Search For Friends</h1>
 
-    <!-- Search & Send Friend Request -->
-    <form method="POST" style="margin-bottom: 2rem;">
+    <form method="POST" class="friends-search">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="text" name="search_username" placeholder="Search for a user..." required>
-      <button type="submit">Send Friend Request</button>
+      <input type="text" name="search_username"
+             placeholder="Search for a user…" required>
+      <button type="submit" class="friend-button send-request">
+        Send&nbsp;Friend&nbsp;Request
+      </button>
     </form>
 
-    <!-- Incoming Friend Requests -->
-    <section class="incoming-requests" style="margin-bottom: 2rem;">
-      <h2>Incoming Requests</h2>
+    <section class="requests">
+      <h2 class="section-heading">Incoming&nbsp;Requests</h2>
+
       {% if incoming %}
         {% for req in incoming %}
           <div class="friend-block">
             <div class="friend-name">{{ req.sender_id }}</div>
+
             <div class="friend-actions">
-              <form method="POST" action="{{ url_for('main.respond_request', req_id=req.id, action='accept') }}" style="display:inline;">
+              <form method="POST"
+                    action="{{ url_for('main.respond_request', req_id=req.id, action='accept') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                <button class="friend-button" type="submit">Accept</button>
+                <button class="friend-button accept" type="submit">Accept</button>
               </form>
-              <form method="POST" action="{{ url_for('main.respond_request', req_id=req.id, action='reject') }}" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                <button class="friend-button" type="submit">Reject</button>
+              <form method="POST"
+                    action="{{ url_for('main.respond_request', req_id=req.id, action='reject') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="friend-button reject" type="submit">Reject</button>
               </form>
             </div>
           </div>
         {% endfor %}
       {% else %}
-        <p>No pending requests.</p>
+        <p class="empty-state">No pending requests.</p>
       {% endif %}
     </section>
 
-    <!-- Accepted Friends -->
     <section class="friends-list">
-      <h2>Friends</h2>
+      <h2 class="section-heading">Friends</h2>
+
       {% if accepted %}
         {% for fr in accepted %}
           {% set friend = fr.receiver_id if fr.sender_id == current_user.username else fr.sender_id %}
           <div class="friend-block">
             <div class="friend-name">{{ friend }}</div>
+
             <div class="friend-actions">
-              <a class="friend-button compare" href="{{ url_for('main.compare') }}?friend={{ friend }}">Compare</a>
-              <form method="POST" action="{{ url_for('main.remove_friend', username=friend) }}" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button class="friend-button" type="submit">Remove</button>
-              </form>
+              <a class="friend-button compare" href="{{ url_for('main.compare') }}?friend={{ friend }}">
+                Compare
+              </a>
+
+              <button type="button" class="friend-button remove-trigger ellipsis">⋯</button>
+
+              <div class="confirm-box">
+                <form method="POST" action="{{ url_for('main.remove_friend', username=friend) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="friend-button danger">Remove&nbsp;Friend</button>
+                </form>
+                <button type="button" class="friend-button cancel-remove">Cancel</button>
+              </div>
             </div>
           </div>
         {% endfor %}
       {% else %}
-        <p>You haven't added any friends yet.</p>
+        <p class="empty-state">You haven’t added any friends yet.</p>
       {% endif %}
     </section>
   </main>

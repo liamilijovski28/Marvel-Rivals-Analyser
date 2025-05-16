@@ -110,6 +110,15 @@ body.matches{
   transform:scale(1.08);
 }
 
+body.friends-page {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0e0e0e; 
+  color: #fff;
+}
+
+
 
 
 
@@ -958,4 +967,165 @@ box-shadow: none;
   background: linear-gradient(90deg, #b00000, #ff4e4e);
   color: #ffd4d4;
   animation: pillPulseRed 2.2s infinite;
+}
+
+/* Content Section for friends page*/
+
+.friends-wrapper {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 0 1rem;
+}
+
+.friends-title {
+  font: 600 1.8rem 'Segoe UI', sans-serif;
+  color: #fff;
+  margin-bottom: 2rem;
+  text-transform: none;
+  letter-spacing: 1px;
+}
+
+.section-heading {
+  font: 600 2rem 'Segoe UI', sans-serif;
+  margin: 0 0 1rem;
+}
+
+.empty-state {
+  color: #c6c6c6;
+  font-size: 0.95rem;
+  margin: 0 0 2rem;
+}
+
+.friends-search {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 2.5rem;
+}
+
+.friends-search input[type="text"] {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #2c2c2c;
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  height: 42px;
+  width: 300px;
+  padding: 0 1rem;
+  font-size: 1.1rem;
+}
+.friends-search input::placeholder { color: #888; }
+
+.friends-search .send-request {
+  background: #2d2d2d;
+  border: 1px solid #2c2c2c;
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  height: 44px; 
+  padding: 0 22px;
+  font: 600 1rem 'Segoe UI', sans-serif;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.friends-search .send-request:hover { background: #424242; }
+
+.requests     { margin-bottom: 7rem; }
+.friends-list { margin-top:    9rem; }
+
+.friend-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a1a1a;
+  border: 1px solid #2f2f2f;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 14px;
+  gap: 1.6rem;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.friend-block:hover {
+  transform: scale(1.02);
+  border: 1px solid #444;
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.45);
+}
+
+.friend-name {
+  font: 600 1.15rem 'Segoe UI', sans-serif;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.friend-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.friend-button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  font: 600 0.9rem 'Segoe UI', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.friend-button.compare,
+.friend-button.accept {
+  background: #009a51;
+  color: #fff;
+}
+.friend-button.compare:hover,
+.friend-button.accept:hover {
+  background: #18c56b;
+}
+
+.friend-button.reject,
+.friend-button.danger {
+  background: #d84040;
+  color: #fff;
+  border: 1px solid #000;
+}
+.friend-button.reject:hover,
+.friend-button.danger:hover {
+  background: #b03030;
+}
+
+.friend-button.ellipsis {
+  width: 42px;
+  text-align: center;
+  font-size: 1.4rem;
+  padding: 4px 0;
+  background: #2d2d2d;
+  color: #eee;
+}
+.friend-button.ellipsis:hover { background: #454545; }
+
+.friend-button.cancel-remove {
+  background: #2d2d2d;
+  color: #eee;
+  border: 1px solid #000;
+}
+.friend-button.cancel-remove:hover { background: #424242; }
+
+.confirm-box {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 130%;
+  flex-direction: column;
+  gap: 8px;
+  background: #121212;
+  border: 1px solid #1a1a1a;
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
+.requests  .friend-button:hover,
+.friends-list .friend-button:hover {
+  transform: none;
 }
