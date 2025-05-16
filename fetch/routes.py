@@ -5,6 +5,8 @@ from fetch.forms import LoginForm, SignupForm, SettingsForm
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
 from fetch.models import RestrictedFriends, Stats, User  # Import your User model
 from flask_login import login_required, current_user, login_user, logout_user
+from fetch.models import User, FriendRequest
+from flask import request
 
 @app.route('/home')
 @login_required
@@ -243,10 +245,62 @@ def get_heroes():
     return jsonify(response.json())
 
 
-@app.route("/friends")
+@app.route("/friends", methods=["GET", "POST"])
 @login_required
 def friends():
-    return render_template("Friends.html")
+    user = current_user
+
+    # --- Handle sending friend request ---
+    if request.method == "POST":
+        search_username = request.form.get("search_username", "").strip()
+        if search_username == user.username:
+            flash("You can't add yourself as a friend.", "warning")
+        else:
+            recipient = User.query.filter_by(username=search_username).first()
+            if not recipient:
+                flash("User not found.", "danger")
+            else:
+                existing = FriendRequest.query.filter_by(sender_id=user.username, receiver_id=recipient.username).first()
+                reverse = FriendRequest.query.filter_by(sender_id=recipient.username, receiver_id=user.username).first()
+                if existing or reverse:
+                    flash("Friend request already exists or is pending.", "info")
+                else:
+                    db.session.add(FriendRequest(sender_id=user.username, receiver_id=recipient.username))
+                    db.session.commit()
+                    flash("Friend request sent!", "success")
+
+    # --- Show accepted friends ---
+    accepted = FriendRequest.query.filter(
+        ((FriendRequest.sender_id == user.username) | (FriendRequest.receiver_id == user.username)) &
+        (FriendRequest.status == 'accepted')
+    ).all()
+
+    # --- Show incoming requests ---
+    incoming = FriendRequest.query.filter_by(receiver_id=user.username, status='pending').all()
+
+    return render_template("Friends.html", accepted=accepted, incoming=incoming)
+
+@app.route("/respond_request/<int:req_id>/<action>", methods=["POST"])
+@login_required
+def respond_request(req_id, action):
+    req = FriendRequest.query.get_or_404(req_id)
+
+    if req.receiver_id != current_user.username:
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for("friends"))
+
+    if action == "accept":
+        req.status = "accepted"
+        sender = User.query.filter_by(username=req.sender_id).first()
+        receiver = User.query.filter_by(username=req.receiver_id).first()
+        sender.friends.append(receiver)
+        receiver.friends.append(sender)
+    elif action == "reject":
+        req.status = "rejected"
+
+    db.session.commit()
+    return redirect(url_for("friends"))
+
 
 @app.route("/compare")
 @login_required
