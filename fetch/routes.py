@@ -9,6 +9,91 @@ from flask_login import login_required, current_user, login_user, logout_user
 from fetch.models import User, FriendRequest
 from fetch.blueprints import blueprint
 
+def get_total_hero_stats(player_id, season=None):
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    base_url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    season_list = ["0", "1", "1.5", "2"] if not season else [season]
+    api_responses = []
+
+    for s in season_list:
+        url = f"{base_url}?season={s}"
+        try:
+            res = requests.get(url, headers=headers).json()
+            api_responses.append(res)
+        except Exception as e:
+            print(f"Hero stat fetch failed for season {s}: {e}")
+
+    def extract_hero_stats(resp, mode):
+        key = f"heroes_{mode}"
+        return resp.get(key, [])
+
+    damage = healing = blocked = 0
+    for res in api_responses:
+        for mode in ["ranked", "unranked"]:
+            for hero in extract_hero_stats(res, mode):
+                damage += hero.get("damage", 0)
+                healing += hero.get("heal", 0)
+                blocked += hero.get("damage_taken", 0)
+
+    return {
+        "damage": round(damage, 2),
+        "healing": round(healing, 2),
+        "blocked": round(blocked, 2)
+    }
+
+def get_overall_stats(player_id, season=None):
+    headers = {
+        "x-api-key": "a5cc115f8d7507f2fc5fb842dfb2ee8fe3f263c2f5ab6825dd3f6846e582d84a"
+    }
+
+    url = f"https://marvelrivalsapi.com/api/v1/player/{player_id}"
+    if season:
+        url += f"?season={season}"
+
+    try:
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        # print("== DEBUG Raw overall_stats for", player_id, "==")
+        # import pprint
+        # # pprint.pprint(data.get("overall_stats", {}))  # 👈 This line
+    except Exception as e:
+        print(f"Error fetching player data: {e}")
+        return {}
+
+    stats = data.get("overall_stats", {})
+    ranked = stats.get("ranked", {})
+    unranked = stats.get("unranked", {})
+
+    def sum_stat(key):
+        return ranked.get(key, 0) + unranked.get(key, 0)
+
+    kills = sum_stat("total_kills")
+    deaths = sum_stat("total_deaths")
+    assists = sum_stat("total_assists")
+    damage = sum_stat("damage")
+    healing = sum_stat("heal")
+    blocked = sum_stat("damage_taken")  # correct key for blocked
+
+
+    mvps = sum_stat("total_mvps")
+    svps = sum_stat("total_svp")
+    max_streak = max(ranked.get("max_kill_streak", 0), unranked.get("max_kill_streak", 0))
+
+    return {
+        "kda": round(kills / deaths, 2) if deaths > 0 else kills,
+        "kills": kills,
+        "deaths": deaths,
+        "assists": assists,
+        "damage": damage,
+        "healing": healing,
+        "blocked": blocked,
+        "svps": svps
+    }
+
+
 @blueprint.route('/home')
 @login_required
 def home():
@@ -294,7 +379,37 @@ def friends():
 @blueprint.route("/compare")
 @login_required
 def compare():
-    return render_template("compare.html")
+    from fetch.models import User  # just to be safe
+    player_id = current_user.get_id()
+    season = request.args.get("season")
+    friend_username = request.args.get("friend")
+
+    # Get own stats and augment with hero totals
+    user_stats = get_overall_stats(player_id, season)
+    user_hero_totals = get_total_hero_stats(player_id, season)
+    user_stats.update(user_hero_totals)
+
+    # Setup friend stats
+    friend_stats = {}
+    friend_name = None
+
+    if friend_username:
+        friend_user = User.query.filter_by(username=friend_username).first()
+        if friend_user:
+            friend_name = friend_user.username
+            friend_stats = get_overall_stats(friend_user.player_id, season)
+            friend_hero_totals = get_total_hero_stats(friend_user.player_id, season)
+            friend_stats.update(friend_hero_totals)
+
+    return render_template(
+        "compare.html",
+        user_stats=user_stats,
+        friend_stats=friend_stats,
+        friend_name=friend_name
+    )
+
+
+
 
 @blueprint.route("/settings", methods=["GET", "POST"])
 @login_required

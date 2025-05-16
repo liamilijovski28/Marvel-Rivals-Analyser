@@ -58,7 +58,10 @@
 
   <section class="content-area">
   </section>
-
+  <script>
+    const userStatsFromFlask = {{ user_stats | tojson | default('{}', true) }};
+    const friendStatsFromFlask = {{ friend_stats | tojson | default('{}', true) }};
+  </script>
   <script src="{{ url_for('main.static', filename='js/compare.js') }}"></script>
-</body>
-</html>
+  </body>
+  </html>
