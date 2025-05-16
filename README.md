@@ -84,3 +84,20 @@ From main directory:
 
 Can now access site on http://127.0.0.1:5000
 ```
+
+# Testing
+
+```
+Start and Initialise Virtual Environment:
+  
+  python3 -m venv env
+
+  source env/bin/activate
+
+  pip install -r requirements.txt
+
+reset database and run the tesing:
+
+  pytest test/unitTests.py
+
+  test/izzy_test.py
