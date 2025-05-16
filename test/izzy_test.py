@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import pytest
 
@@ -9,7 +10,9 @@ class TestSignupLogin:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920,1080")
-        self.driver = webdriver.Chrome(options=chrome_options)
+
+        # Correct usage of ChromeDriverManager
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     def teardown_method(self):
         self.driver.quit()
