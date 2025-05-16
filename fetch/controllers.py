@@ -5,15 +5,6 @@ from fetch.models import User, RestrictedFriends
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-def try_login(username, password):
-    """
-    Attempt to log a user in by verifying their credentials.
-    """
-    user = User.query.filter_by(username=username).first()
-    if user and check_password_hash(user.password, password):
-        return user
-    return "Invalid username or password"
-
 
 def try_signup(username, password, player_id):
     """
@@ -26,6 +17,8 @@ def try_signup(username, password, player_id):
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
         return "Username already exists. Please choose something else."
+        if not player_id.isdigit() or ( (len(player_id) != 9) and (len(player_id) != 10 ) ):
+            return "Player ID must be 9 or 10 digits."
 
     existing_player = User.query.filter_by(player_id=player_id).first()
     if existing_player:
