@@ -42,3 +42,31 @@ def try_signup(username, password, player_id):
             return f"An error occurred: {str(e)}"
         return new_user
     
+def try_change_settings(new_username=None, new_password=None, new_playerID=None, data_sharing=True, restricted_friends=None, user=None):
+
+            if new_username:
+                existing_user = User.query.filter_by(username=new_username).first()
+                if existing_user:
+                    return 'Username already exists. Please choose something else.'
+                user.username = new_username
+            if new_password:
+                user.password = generate_password_hash(new_password)
+            if new_playerID:
+                existing_player = User.query.filter_by(player_id=new_playerID).first()
+                if existing_player:
+                    return "That Player ID is already linked to another account."
+                if not new_playerID.isdigit() or len(new_playerID) != 9:
+                    return "Player ID must be exactly 9 digits."
+                user.player_id = new_playerID
+
+            rf = RestrictedFriends.query.filter_by(player_id=user.player_id).first()
+            if not rf:
+                rf = RestrictedFriends(player_id=user.player_id)
+                db.session.add(rf)
+
+            rf.data_sharing = data_sharing
+            rf.restricted_friends = restricted_friends
+
+            db.session.commit()
+            #updating the login details
+            return user

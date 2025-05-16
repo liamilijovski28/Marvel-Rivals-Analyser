@@ -1,6 +1,6 @@
 from fetch import db
 import requests
-from fetch.controllers import try_login, try_signup
+from fetch.controllers import try_change_settings, try_login, try_signup
 from flask import jsonify, session, render_template, redirect, url_for, flash
 from fetch.forms import LoginForm, SignupForm, SettingsForm
 from werkzeug.security import check_password_hash, generate_password_hash  # Import password hash checker
@@ -294,35 +294,16 @@ def settings():
     if form.validate_on_submit():
         if form.submit.data:
                
-            new_username = form.new_username.data
-            new_password = form.new_password.data
-            new_playerID = form.new_playerID.data.strip()
-            data_sharing = form.data_sharing.data == 'yes'
-            restricted_friends = form.restricted_friends.data
-
-            user = current_user
-            if new_username:
-                user.username = new_username
-            if new_password:
-                user.password = generate_password_hash(new_password)
-            if new_playerID:
-                user.player_id = new_playerID
-
-            rf = RestrictedFriends.query.filter_by(player_id=user.player_id).first()
-            if not rf:
-                rf = RestrictedFriends(player_id=user.player_id)
-                db.session.add(rf)
-
-            rf.data_sharing = data_sharing
-            rf.restricted_friends = restricted_friends
-
-            db.session.commit()
-            #updating the login details
-            logout_user()
-            updated_user = user
-            if new_playerID:
-                updated_user = User.query.filter_by(player_id=new_playerID).first()
-            login_user(updated_user)
+            new_user, rf = try_change_settings(
+                new_username=form.username.data,
+                new_password=form.password.data,
+                new_playerID=form.player_id.data,
+                data_sharing=form.data_sharing.data,
+                restricted_friends=form.restricted_friends.data,
+                user=current_user
+            )
+            if new_user.username != current_user.username or new_user.player_id != current_user.player_id or new_user.password != current_user.password:
+                logout_user()
 
         #if logout of close account was pressed
         if form.logout.data:
